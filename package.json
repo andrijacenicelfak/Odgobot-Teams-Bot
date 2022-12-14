@@ -1,0 +1,19 @@
+{
+    "name": "TZPUBot",
+    "version": "0.0.1",
+    "description": "",
+    "author": "",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "devDependencies": {
+        "@microsoft/teamsfx-cli": "1.*"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "@google-cloud/local-auth": "^2.1.0",
+        "@microsoft/adaptivecards-tools": "^1.2.0",
+        "googleapi": "^1.0.2",
+        "googleapis": "^105.0.0"
+    }
+}
