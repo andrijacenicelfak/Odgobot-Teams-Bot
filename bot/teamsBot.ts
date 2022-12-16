@@ -21,15 +21,20 @@ import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import { getInfoFromTable } from "./SheetsFunctions";
+import * as builder from 'botbuilder'
 export interface DataInterface {
   likeCount: number;
 }
-
+interface Korisnik{
+  korisnik : string;
+  id : string;
+  tid : string;
+  cid : string;
+}
 export class TeamsBot extends TeamsActivityHandler {
   // record the likeCount
   likeCountObj: { likeCount: number };
-  list = [];
-
+  listaKorisnika: [Korisnik];
   constructor() {
     super();
     this.likeCountObj = { likeCount: 0 };
@@ -60,7 +65,6 @@ export class TeamsBot extends TeamsActivityHandler {
           break;
         }
         case "podaci":{
-          console.log(context);
           let sheet = await getInfoFromTable("1BLF6J_ORoPdsw_V868zrAI6TVLDsbn9ewSU9WlGolD4");
           let data = sheet.data.values;
           let odgovor = data[0][0] + " " + data[0][1] + " " + data[0][2] + " " + data[0][3] + " " + data[0][4] + "\n";
@@ -84,15 +88,29 @@ export class TeamsBot extends TeamsActivityHandler {
           await context.sendActivity("Sledeci student je : " + student);
           break;
         } case "dodaj":{
-          this.list.push(async ()=>{
-            await context.sendActivity("Callback");
-          });
-          await context.sendActivity("Dodato");
+          let user = context.activity.from.name;
+          let userID = context.activity.from.aadObjectId;
+          let conversationID = context.activity.conversation.id;
+          let tID = context.activity.channelData.Tenant.Id;
+          this.listaKorisnika.push({korisnik : user, id : userID, cid : conversationID, tid : tID});
+          await context.sendActivity(`Ime ${user}\n ID ${userID}\n ConvoID ${conversationID}`);
           break;
-        }case "callback":{
-            this.list.forEach(async e=>{
-              await e();
-            });
+        } case "obavesti":{
+          this.listaKorisnika.forEach(korisnik => {
+            var address = {
+              chanelId: korisnik.cid,
+              user : { id: korisnik.id},
+              channelData: {tenant:{id: korisnik.tid}},
+              bot: {
+                id : context.activity.recipient.id,
+                name : context.activity.recipient.name
+              },
+              serviceUrl : context.activity.serviceUrl,
+              useAuth : true
+            };
+            //https://learn.microsoft.com/en-us/microsoftteams/platform/resources/bot-v3/bot-conversations/bots-conv-proactive#examples
+            //NIJE VISE ISTOOOOOOO NEMA GAAA NERVIRA ME!
+          });
           break;
         }
         default:{
@@ -122,14 +140,6 @@ export class TeamsBot extends TeamsActivityHandler {
       await turnContext.sendActivity(message);
       await next();
     });
-    /*
-    this.onMembersAdded(async (context: TurnContext, next: () => Promise<void>) :Promise<void>=>{
-      const message = MessageFactory.text("Ti si mala zaba");
-      console.log("DADAO");
-      context.sendActivity(message);
-      await next();
-    });
-    */
   }
   // Invoked when an action is taken on an Adaptive Card. The Adaptive Card sends an event to the Bot and this
   // method handles that event.
