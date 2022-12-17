@@ -34,11 +34,11 @@ interface Korisnik{
 export class TeamsBot extends TeamsActivityHandler {
   // record the likeCount
   likeCountObj: { likeCount: number };
-  listaKorisnika: [Korisnik];
+  listaKorisnika: Array<Korisnik>;
   constructor() {
     super();
     this.likeCountObj = { likeCount: 0 };
-
+    this.listaKorisnika = [];
     
 
     this.onMessage(async (context, next) => {
@@ -91,13 +91,20 @@ export class TeamsBot extends TeamsActivityHandler {
           let user = context.activity.from.name;
           let userID = context.activity.from.aadObjectId;
           let conversationID = context.activity.conversation.id;
-          let tID = context.activity.channelData.Tenant.Id;
-          this.listaKorisnika.push({korisnik : user, id : userID, cid : conversationID, tid : tID});
-          await context.sendActivity(`Ime ${user}\n ID ${userID}\n ConvoID ${conversationID}`);
+          //let tID = context.activity.channelData.Tenant.Id;
+          let kor : Korisnik;
+          kor = {korisnik : user, id : userID, cid : conversationID, tid : JSON.stringify(context.activity.channelData)};
+          
+          this.listaKorisnika.push(kor);
+          
+          await context.sendActivity(`Ime : ${user}`);
+          await context.sendActivity(`ID : ${userID}`);
+          await context.sendActivity(`Conversation id :  ${conversationID}`);
+          await context.sendActivity(`Tenant id :  ${JSON.stringify(context.activity.channelData)}`);
           break;
         } case "obavesti":{
-          this.listaKorisnika.forEach(korisnik => {
-            var address = {
+          this.listaKorisnika.forEach(async korisnik => {
+            /*var address = {
               chanelId: korisnik.cid,
               user : { id: korisnik.id},
               channelData: {tenant:{id: korisnik.tid}},
@@ -110,6 +117,12 @@ export class TeamsBot extends TeamsActivityHandler {
             };
             //https://learn.microsoft.com/en-us/microsoftteams/platform/resources/bot-v3/bot-conversations/bots-conv-proactive#examples
             //NIJE VISE ISTOOOOOOO NEMA GAAA NERVIRA ME!
+            context.adapter.createConversationAsync(address.bot.id, address.chanelId, address.serviceUrl, address.user.id, null, (async (context) =>{
+              context.sendActivity("ZABAAA");
+              } )
+            );*/
+            await context.sendActivity(JSON.stringify(korisnik));
+            );
           });
           break;
         }
