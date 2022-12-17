@@ -103,8 +103,9 @@ export class TeamsBot extends TeamsActivityHandler {
           await context.sendActivity(`Tenant id :  ${JSON.stringify(context.activity.channelData)}`);
           break;
         } case "obavesti":{
+         /*
           this.listaKorisnika.forEach(async korisnik => {
-            /*var address = {
+            var address = {
               chanelId: korisnik.cid,
               user : { id: korisnik.id},
               channelData: {tenant:{id: korisnik.tid}},
@@ -120,10 +121,11 @@ export class TeamsBot extends TeamsActivityHandler {
             context.adapter.createConversationAsync(address.bot.id, address.chanelId, address.serviceUrl, address.user.id, null, (async (context) =>{
               context.sendActivity("ZABAAA");
               } )
-            );*/
+            );
             await context.sendActivity(JSON.stringify(korisnik));
             );
           });
+          */
           break;
         }
         default:{
