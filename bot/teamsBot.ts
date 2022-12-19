@@ -7,21 +7,15 @@ import {
   AdaptiveCardInvokeValue,
   AdaptiveCardInvokeResponse,
   ConversationReference,
-  ConversationParameters,
-  teamsGetChannelId,
   Activity,
-  BotFrameworkAdapter,
   ChannelInfo,
   TeamInfo,
   MessageFactory,
-  BotHandler,
-  TeamsInfo
 } from "botbuilder";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import { getInfoFromTable } from "./SheetsFunctions";
-import * as builder from 'botbuilder'
 export interface DataInterface {
   likeCount: number;
 }
@@ -30,15 +24,19 @@ interface Korisnik{
   id : string;
   tid : string;
   cid : string;
-}
+};
+interface ConvActiv{
+  conv : Partial<ConversationReference>;
+  act : Activity;
+};
 export class TeamsBot extends TeamsActivityHandler {
   // record the likeCount
   likeCountObj: { likeCount: number };
-  listaKorisnika: Array<Korisnik>;
+  conversationReferenceList: ConvActiv[];
   constructor() {
     super();
     this.likeCountObj = { likeCount: 0 };
-    this.listaKorisnika = [];
+    this.conversationReferenceList = [];
     
 
     this.onMessage(async (context, next) => {
@@ -95,37 +93,18 @@ export class TeamsBot extends TeamsActivityHandler {
           let kor : Korisnik;
           kor = {korisnik : user, id : userID, cid : conversationID, tid : JSON.stringify(context.activity.channelData)};
           
-          this.listaKorisnika.push(kor);
-          
+          //this.listaKorisnika.push(kor);
+          const convref = TurnContext.getConversationReference(context.activity);
+          let a : ConvActiv= {conv : convref, act : context.activity};
+          this.conversationReferenceList.push(a);
+
           await context.sendActivity(`Ime : ${user}`);
           await context.sendActivity(`ID : ${userID}`);
           await context.sendActivity(`Conversation id :  ${conversationID}`);
           await context.sendActivity(`Tenant id :  ${JSON.stringify(context.activity.channelData)}`);
           break;
         } case "obavesti":{
-         /*
-          this.listaKorisnika.forEach(async korisnik => {
-            var address = {
-              chanelId: korisnik.cid,
-              user : { id: korisnik.id},
-              channelData: {tenant:{id: korisnik.tid}},
-              bot: {
-                id : context.activity.recipient.id,
-                name : context.activity.recipient.name
-              },
-              serviceUrl : context.activity.serviceUrl,
-              useAuth : true
-            };
-            //https://learn.microsoft.com/en-us/microsoftteams/platform/resources/bot-v3/bot-conversations/bots-conv-proactive#examples
-            //NIJE VISE ISTOOOOOOO NEMA GAAA NERVIRA ME!
-            context.adapter.createConversationAsync(address.bot.id, address.chanelId, address.serviceUrl, address.user.id, null, (async (context) =>{
-              context.sendActivity("ZABAAA");
-              } )
-            );
-            await context.sendActivity(JSON.stringify(korisnik));
-            );
-          });
-          */
+          await this.messageAllMembersAsync(context);
           break;
         }
         default:{
@@ -137,7 +116,7 @@ export class TeamsBot extends TeamsActivityHandler {
       // By calling next() you ensure that the next BotHandler is run.
       await next();
     });
-
+    
     this.onMembersAdded(async (context, next) => {
       const membersAdded = context.activity.membersAdded;
       for (let cnt = 0; cnt < membersAdded.length; cnt++) {
@@ -155,6 +134,23 @@ export class TeamsBot extends TeamsActivityHandler {
       await turnContext.sendActivity(message);
       await next();
     });
+  }
+  
+  async messageAllMembersAsync(context : TurnContext) {
+    /** 
+     * 
+    this.conversationReferenceList.forEach(async c=>{
+      context.adapter.continueConversation(c.conv, async (contextn : TurnContext)=>{
+        contextn.sendActivity("Mala Zaba!");
+      });
+    });
+    */
+   await this.conversationReferenceList.forEach(async cr =>{
+    context.adapter.continueConversation(cr.conv, async(contextn : TurnContext)=>{
+      await contextn.sendActivity("ZABAAAAAAAAAA");
+    });
+   });
+    await context.sendActivity(MessageFactory.text('All messages have been sent.'));
   }
   // Invoked when an action is taken on an Adaptive Card. The Adaptive Card sends an event to the Bot and this
   // method handles that event.
