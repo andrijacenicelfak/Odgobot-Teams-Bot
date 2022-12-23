@@ -137,14 +137,6 @@ export class TeamsBot extends TeamsActivityHandler {
   }
   
   async messageAllMembersAsync(context : TurnContext) {
-    /** 
-     * 
-    this.conversationReferenceList.forEach(async c=>{
-      context.adapter.continueConversation(c.conv, async (contextn : TurnContext)=>{
-        contextn.sendActivity("Mala Zaba!");
-      });
-    });
-    */
    await this.conversationReferenceList.forEach(async cr =>{
     context.adapter.continueConversation(cr.conv, async(contextn : TurnContext)=>{
       await contextn.sendActivity("ZABAAAAAAAAAA");
