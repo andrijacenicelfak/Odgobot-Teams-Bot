@@ -14,8 +14,10 @@ import {
 } from "botbuilder";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
+import rawProfesorPocetna from "./adaptiveCards/profesor_pocetna.json"
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import { getInfoFromTable } from "./SheetsFunctions";
+import {kreirajOdgovaranje} from "./adaptivneFunkcije";
 export interface DataInterface {
   likeCount: number;
 }
@@ -52,7 +54,7 @@ export class TeamsBot extends TeamsActivityHandler {
       // Trigger command by IM text
       switch (txt) {
         case "welcome": {
-          const card = AdaptiveCards.declareWithoutData(rawWelcomeCard).render();
+          const card = AdaptiveCards.declareWithoutData(rawProfesorPocetna).render();
           await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
           break;
         }
@@ -160,6 +162,12 @@ export class TeamsBot extends TeamsActivityHandler {
         attachments: [CardFactory.adaptiveCard(card)],
       });
       return { statusCode: 200, type: undefined, value: undefined };
+    }
+    if(invokeValue.action.verb === "kreairajOdogovaranje"){
+        let id = await kreirajOdgovaranje();
+        console.log(id);
+        await context.sendActivity(MessageFactory.text(id));
+        return { statusCode: 200, type: undefined, value: undefined };
     }
   }
 
