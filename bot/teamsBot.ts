@@ -15,9 +15,10 @@ import {
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
 import rawProfesorPocetna from "./adaptiveCards/profesor_pocetna.json"
+import rawProfesorRed from "./adaptiveCards/profesor_red_odgovaranja.json"
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import { getInfoFromTable } from "./SheetsFunctions";
-import {kreirajOdgovaranje} from "./adaptivneFunkcije";
+import {kreirajOdgovaranje,preuzmiInformacijeOdgovaranja} from "./adaptivneFunkcije";
 export interface DataInterface {
   likeCount: number;
 }
@@ -166,9 +167,28 @@ export class TeamsBot extends TeamsActivityHandler {
     if(invokeValue.action.verb === "kreairajOdogovaranje"){
         let id = await kreirajOdgovaranje();
         console.log(id);
-        await context.sendActivity(MessageFactory.text(id));
+        let data = await preuzmiInformacijeOdgovaranja("1BLF6J_ORoPdsw_V868zrAI6TVLDsbn9ewSU9WlGolD4");
+        console.log(data)
+        const card = AdaptiveCards.declare<DataInterface>(rawProfesorRed).render();
+        await context.updateActivity({
+          type: "message",
+          id: context.activity.replyToId,
+          attachments: [CardFactory.adaptiveCard(card)],
+        });
         return { statusCode: 200, type: undefined, value: undefined };
     }
+    if(invokeValue.action.verb === "obavestiSledeceg"){
+      let data = await preuzmiInformacijeOdgovaranja("1BLF6J_ORoPdsw_V868zrAI6TVLDsbn9ewSU9WlGolD4");
+      console.log(data)
+      let student = undefined;
+      data.forEach((e, i)=>{
+        if(!student && e[4] == "FALSE"){
+          student = e[0] + " "+ e[1] + " " + e[2] + " " + e[3]
+        }
+      });
+      await context.sendActivity("Sledeci student je : " + student);
+      return { statusCode: 200, type: undefined, value: undefined };
+  }
   }
 
   // Message extension Code

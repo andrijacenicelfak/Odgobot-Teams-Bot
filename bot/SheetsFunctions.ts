@@ -15,9 +15,10 @@ export async function getInfoFromTable(sheetID : string){
     const data = await gsheet.spreadsheets.values.get({
         auth : auth,
         spreadsheetId : sheetID,
-        range: "Sheet1",
+        range: "prvo_odgovaranje",
     })
-
+    console.log(data);
+    
     return data;
 }
 export async function dodajUTabeluZaOdgovaranje(id : string, title : string) {
@@ -62,4 +63,24 @@ export async function kreirajTabeluZaOdgovaranje() : Promise<string>{
       } catch (err) {
         throw err;
       }
+}
+
+export async function preuzmiInformacijeOdgovaranja(sheetID: string, id_odgovaranja:string){
+    
+   try{
+        let sheet = await getInfoFromTable(sheetID);
+        let data = sheet.data.values;
+        let rez = [[]];
+        // rez[0][0] = data[0][0];  rez[0][1] = data[0][1]; rez[0][2] = data[0][2]; rez[0][3] = data[0][3]; rez[0][4] = data[0][4];
+        // let j = 0;
+        // data.forEach((e, i) => {
+        // if(i != 0 ){
+        //     rez[j][0] = data[i][0];  rez[j][1] = data[i][1]; rez[j][2] = data[i][2]; rez[j][3] = data[i][3]; rez[j][4] = data[i][4];
+        //     j++;
+        // }
+        // });
+        return data;
+   }catch(err){
+    throw err;
+   }
 }
