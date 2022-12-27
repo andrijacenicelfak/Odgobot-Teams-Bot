@@ -4,15 +4,38 @@
     "version": "1.5",
     "body": [
         {
-            "type": "TextBlock",
-            "text": "Naslov odgovaranja\n",
-            "wrap": true,
-            "id": "1"
-        },
-        {
-            "type": "Input.Toggle",
-            "title": "Dodavanje korisnika",
-            "id": "2"
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.Execute",
+                                    "title": "Dodavanje studenta",
+                                    "verb": "omoguci"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "${omoguceno}",
+                            "wrap": true
+                        }
+                    ],
+                    "horizontalAlignment": "Center",
+                    "verticalContentAlignment": "Center"
+                }
+            ]
         },
         {
             "type": "Table",
@@ -37,11 +60,9 @@
                                 {
                                     "type": "TextBlock",
                                     "text": "Broj indeksa",
-                                    "wrap": true,
-                                    "id": "111"
+                                    "wrap": true
                                 }
                             ]
-                           
                         },
                         {
                             "type": "TableCell",
@@ -49,11 +70,9 @@
                                 {
                                     "type": "TextBlock",
                                     "text": "Ime učesnika",
-                                    "wrap": true,
-                                    "id": "122"
+                                    "wrap": true
                                 }
                             ]
-                         
                         },
                         {
                             "type": "TableCell",
@@ -61,14 +80,11 @@
                                 {
                                     "type": "TextBlock",
                                     "text": "Odgovarao",
-                                    "wrap": true,
-                                    "id": "133"
+                                    "wrap": true
                                 }
                             ]
-                            
                         }
                     ]
-                
                 },
                 {
                     "type": "TableRow",
@@ -78,38 +94,32 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "17905",
-                                    "wrap": true,
-                                    "id": "211"
+                                    "text": "${vrednosti[0]}",
+                                    "wrap": true
                                 }
                             ]
-                          
                         },
                         {
                             "type": "TableCell",
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "Milica Rangelov",
-                                    "wrap": true,
-                                    "id": "222"
+                                    "text": "${vrednosti[1]}",
+                                    "wrap": true
                                 }
                             ]
-                           
                         },
                         {
                             "type": "TableCell",
                             "items": [
                                 {
-                                    "type": "Input.Toggle",
-                                    "title": "New Input.Toggle",
-                                    "id": "233"
+                                    "type": "TextBlock",
+                                    "text": "${vrednosti[2]}",
+                                    "wrap": true
                                 }
                             ]
-                           
                         }
                     ]
-                   
                 },
                 {
                     "type": "TableRow",
@@ -119,38 +129,137 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "18042",
-                                    "wrap": true,
-                                    "id": "311"
+                                    "text": "${vrednosti[3]}",
+                                    "wrap": true
                                 }
                             ]
-                            
                         },
                         {
                             "type": "TableCell",
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "Andrija Cenić",
-                                    "wrap": true,
-                                    "id": "322"
+                                    "text": "${vrednosti[4]}",
+                                    "wrap": true
                                 }
                             ]
-                          
                         },
                         {
                             "type": "TableCell",
                             "items": [
                                 {
-                                    "type": "Input.Toggle",
-                                    "title": "New Input.Toggle",
-                                    "id": "333"
+                                    "type": "TextBlock",
+                                    "text": "${vrednosti[5]}",
+                                    "wrap": true
                                 }
                             ]
-                           
                         }
                     ]
-                 
+                },
+                {
+                    "type": "TableRow",
+                    "cells": [
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${vrednosti[6]}",
+                                    "wrap": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${vrednosti[7]}",
+                                    "wrap": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${vrednosti[8]}",
+                                    "wrap": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "TableRow",
+                    "cells": [
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${vrednosti[9]}",
+                                    "wrap": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${vrednosti[10]}",
+                                    "wrap": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${vrednosti[11]}",
+                                    "wrap": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "TableRow",
+                    "cells": [
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${vrednosti[12]}",
+                                    "wrap": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${vrednosti[13]}",
+                                    "wrap": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "${vrednosti[14]}",
+                                    "wrap": true
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         },
@@ -160,7 +269,7 @@
                 {
                     "type": "Action.Execute",
                     "title": "Obavesti sledećeg na redu",
-                    "verb" : "obavestiSledeceg"
+                    "verb": "obavestiSledeceg"
                 }
             ],
             "id": "3"

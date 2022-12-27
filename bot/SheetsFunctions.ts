@@ -15,11 +15,64 @@ export async function getInfoFromTable(sheetID : string){
     const data = await gsheet.spreadsheets.values.get({
         auth : auth,
         spreadsheetId : sheetID,
-        range: "prvo_odgovaranje",
+        range: "Sheet1",
     })
     console.log(data);
     
     return data;
+}
+export async function vratiPodatkeSvihOdgovaranja() {
+    const auth = new google.auth.GoogleAuth({
+        keyFile: "credentials.json",
+        scopes : "https://www.googleapis.com/auth/spreadsheets",
+    });
+    const client = await auth.getClient();
+    const gsheet = google.sheets({version:"v4", auth: client});
+    let id_odg;
+    try{
+        id_odg = JSON.parse(fs.readFileSync("./id_odgovaranja.json", 'utf-8')).id;
+    } catch(err){
+        console.log(err);
+    }
+    const data = await gsheet.spreadsheets.values.get({
+        auth : auth,
+        spreadsheetId : id_odg,
+        range: "odg",
+    })
+    return data
+}
+export async function togglePoslednjeOdgovaranje(){
+    const auth = new google.auth.GoogleAuth({
+        keyFile: "credentials.json",
+        scopes : "https://www.googleapis.com/auth/spreadsheets",
+    });
+    const client = await auth.getClient();
+    const gsheet = google.sheets({version:"v4", auth: client});
+    let id_odg;
+    try{
+        id_odg = JSON.parse(fs.readFileSync("./id_odgovaranja.json", 'utf-8')).id;
+    } catch(err){
+        console.log(err);
+    }
+    const data = await gsheet.spreadsheets.values.get({
+        auth : auth,
+        spreadsheetId : id_odg,
+        range: "odg",
+    })
+    let value = data.data.values[data.data.values.length-1];
+    console.log(value);
+    value[2] = value[2] === "FALSE" ? "TRUE" : "FALSE";
+    await gsheet.spreadsheets.values.update({
+        spreadsheetId : id_odg,
+        range : "odg!A"+ data.data.values.length + ":C"+data.data.values.length,
+        includeValuesInResponse : false,
+        valueInputOption : "RAW",
+        requestBody : {
+            majorDimension : "ROWS",
+            values : [value]
+        }
+    });
+    return value[2]
 }
 export async function dodajUTabeluZaOdgovaranje(id : string, title : string) {
     const auth = new google.auth.GoogleAuth({
@@ -42,7 +95,7 @@ export async function dodajUTabeluZaOdgovaranje(id : string, title : string) {
         valueInputOption : 'RAW',
         requestBody : {
             values : [
-                [id, title]
+                [id, title, "TRUE"]
             ]
         }
     });
@@ -65,7 +118,7 @@ export async function kreirajTabeluZaOdgovaranje() : Promise<string>{
       }
 }
 
-export async function preuzmiInformacijeOdgovaranja(sheetID: string, id_odgovaranja:string){
+export async function preuzmiInformacijeOdgovaranja(sheetID: string){
     
    try{
         let sheet = await getInfoFromTable(sheetID);
