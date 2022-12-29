@@ -60,11 +60,10 @@ export async function togglePoslednjeOdgovaranje(){
         range: "odg",
     })
     let value = data.data.values[data.data.values.length-1];
-    console.log(value);
-    value[2] = value[2] === "FALSE" ? "TRUE" : "FALSE";
+    value[1] = value[1] === "FALSE" ? "TRUE" : "FALSE";
     await gsheet.spreadsheets.values.update({
         spreadsheetId : id_odg,
-        range : "odg!A"+ data.data.values.length + ":C"+data.data.values.length,
+        range : "odg!A"+ data.data.values.length + ":B"+data.data.values.length,
         includeValuesInResponse : false,
         valueInputOption : "RAW",
         requestBody : {
@@ -72,8 +71,10 @@ export async function togglePoslednjeOdgovaranje(){
             values : [value]
         }
     });
-    return value[2]
+    return value[1]
 }
+
+//DEPRICATED
 export async function dodajUTabeluZaOdgovaranje(id : string, title : string) {
     const auth = new google.auth.GoogleAuth({
         keyFile: "credentials.json",
@@ -100,6 +101,8 @@ export async function dodajUTabeluZaOdgovaranje(id : string, title : string) {
         }
     });
 }
+
+// DEPRICATED!
 export async function kreirajTabeluZaOdgovaranje() : Promise<string>{
     const auth = new google.auth.GoogleAuth({
         keyFile: "credentials.json",
@@ -109,31 +112,190 @@ export async function kreirajTabeluZaOdgovaranje() : Promise<string>{
     const gsheet = google.sheets({version:"v4", auth: client});
     let title = "odgovaranje" + (new Date).getTime().toString();
     try {
-        const spreadsheet = await gsheet.spreadsheets.create({requestBody : {properties : {title : title}}});
+        const spreadsheet = await gsheet.spreadsheets.create(
+            {
+                requestBody : {
+                    properties : {
+                        title : title
+                    },
+
+                }
+            }
+        );
+        let nid = spreadsheet.data.spreadsheetId;
         await dodajUTabeluZaOdgovaranje(spreadsheet.data.spreadsheetId, title);
-        console.log(spreadsheet.data.spreadsheetId)
+        
+        await gsheet.spreadsheets.values.append({
+            spreadsheetId : nid,
+            range: "Sheet1",
+            insertDataOption: 'INSERT_ROWS',
+            includeValuesInResponse: true,
+            valueInputOption : 'RAW',
+            requestBody : {
+                values : [
+                    ["Ime", "Index", "Context"]
+                ],
+            }
+        });
+
+        // await gsheet.spreadsheets.values.update({
+        //     spreadsheetId : nid,
+        //     requestBody : {
+        //     }
+        // });
+
         return spreadsheet.data.spreadsheetId;
       } catch (err) {
         throw err;
       }
 }
 
-export async function preuzmiInformacijeOdgovaranja(sheetID: string){
+export async function kreirajSheetZaOdgovaranje() : Promise<string> {
+    const auth = new google.auth.GoogleAuth({
+        keyFile: "credentials.json",
+        scopes : "https://www.googleapis.com/auth/spreadsheets",
+    });
+    const client = await auth.getClient();
+    const gsheet = google.sheets({version:"v4", auth: client});
+    let title = "odgovaranje" + (new Date).getTime().toString();
+
+    let id_odg;
+    try{
+        id_odg = JSON.parse(fs.readFileSync("./id_odgovaranja.json", 'utf-8')).id;
+    } catch(err){
+        console.log(err);
+    }
+
+    const request = {
+        "spreadsheetId": id_odg,
+        "resource": {
+            "requests": [{
+               "addSheet": {
+                    "properties": {
+                        "title": title
+                    }
+                }
+            }]
+        }
+    };
+
+    await gsheet.spreadsheets.batchUpdate(request, async (err, response) => {
+        if (err) {
+            console.log("Error, nije kreiran sheet!");            
+        }
+        else{
+            await gsheet.spreadsheets.values.append({
+                spreadsheetId : id_odg,
+                range: title,
+                insertDataOption: 'INSERT_ROWS',
+                includeValuesInResponse: true,
+                valueInputOption : 'RAW',
+                requestBody : {
+                    values : [
+                        ["Ime", "Index", "Context"]
+                    ],
+                }
+            });
+            await gsheet.spreadsheets.values.append({
+                spreadsheetId : id_odg,
+                range: "odg",
+                insertDataOption: 'INSERT_ROWS',
+                includeValuesInResponse: true,
+                valueInputOption : 'RAW',
+                requestBody : {
+                    values : [
+                        [title, "TRUE"]
+                    ]
+                }
+            });
+        }
+    });
+
+    return title;
+}
+
+export async function vratiTitlePoslednjegOdgovaranja() : Promise <string>{
+    let title = "";
+    const auth = new google.auth.GoogleAuth({
+        keyFile: "credentials.json",
+        scopes : "https://www.googleapis.com/auth/spreadsheets",
+    });
+    const client = await auth.getClient();
+    const gsheet = google.sheets({version:"v4", auth: client});
+    let id_odg;
+    try{
+        id_odg = JSON.parse(fs.readFileSync("./id_odgovaranja.json", 'utf-8')).id;
+    } catch(err){
+        console.log(err);
+    }
+
+      const data = await gsheet.spreadsheets.values.get({
+        auth : auth,
+        spreadsheetId : id_odg,
+        range: "odg!C1",
+    })
+    title = data.data.values[0][0]
+    return title;
+}
+
+export async function prijaviNaPoslednjeOdgovaranje(ca : string, user : string, index : number) : Promise<boolean>{
+    let title = await vratiTitlePoslednjegOdgovaranja();
     
-   try{
-        let sheet = await getInfoFromTable(sheetID);
-        let data = sheet.data.values;
-        let rez = [[]];
-        // rez[0][0] = data[0][0];  rez[0][1] = data[0][1]; rez[0][2] = data[0][2]; rez[0][3] = data[0][3]; rez[0][4] = data[0][4];
-        // let j = 0;
-        // data.forEach((e, i) => {
-        // if(i != 0 ){
-        //     rez[j][0] = data[i][0];  rez[j][1] = data[i][1]; rez[j][2] = data[i][2]; rez[j][3] = data[i][3]; rez[j][4] = data[i][4];
-        //     j++;
-        // }
-        // });
-        return data;
-   }catch(err){
-    throw err;
-   }
+    const auth = new google.auth.GoogleAuth({
+        keyFile: "credentials.json",
+        scopes : "https://www.googleapis.com/auth/spreadsheets",
+    });
+    const client = await auth.getClient();
+    const gsheet = google.sheets({version:"v4", auth: client});
+    let id_odg;
+    try{
+        id_odg = JSON.parse(fs.readFileSync("./id_odgovaranja.json", 'utf-8')).id;
+    } catch(err){
+        console.log(err);
+    }
+
+    await gsheet.spreadsheets.values.append({
+        spreadsheetId : id_odg,
+        range : title,
+        insertDataOption: 'INSERT_ROWS',
+        includeValuesInResponse: true,
+        valueInputOption : 'RAW',
+        requestBody : {
+            values : [
+                [user, index, ca]
+            ]
+        }
+    });
+
+    return true;
+}
+
+export async function vratiPodatkeSaPoslednjegOdgovaranja(){
+    let title = await vratiTitlePoslednjegOdgovaranja();
+    
+    const auth = new google.auth.GoogleAuth({
+        keyFile: "credentials.json",
+        scopes : "https://www.googleapis.com/auth/spreadsheets",
+    });
+    const client = await auth.getClient();
+    const gsheet = google.sheets({version:"v4", auth: client});
+    let id_odg;
+    try{
+        id_odg = JSON.parse(fs.readFileSync("./id_odgovaranja.json", 'utf-8')).id;
+    } catch(err){
+        console.log(err);
+    }
+
+    const data = await gsheet.spreadsheets.values.get({
+        auth : auth,
+        spreadsheetId : id_odg,
+        range: title + "!A2:C",
+    })
+
+    return data.data.values;
+}
+
+export async function vratiPoslednjeKorisnikeUTabeli() : Promise<{korisnici : string[], omoguceno : string}>{
+
+    return {korisnici : ["asdad", "asdadas"], omoguceno : "TRUE"};
 }

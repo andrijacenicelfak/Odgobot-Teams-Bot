@@ -12,106 +12,39 @@ import {
   TeamInfo,
   MessageFactory,
 } from "botbuilder";
-import rawWelcomeCard from "./adaptiveCards/welcome.json";
-import rawLearnCard from "./adaptiveCards/learn.json";
 import rawProfesorPocetna from "./adaptiveCards/profesor_pocetna.json"
+import rawStudentPocetna from "./adaptiveCards/student_pocetna.json"
 import rawProfesorRed from "./adaptiveCards/profesor_red_odgovaranja.json"
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
-import { getInfoFromTable } from "./SheetsFunctions";
-import {kreirajOdgovaranje,preuzmiInformacijeOdgovaranja, toggleOmoguceno} from "./adaptivneFunkcije";
-export interface DataInterface {
-  likeCount: number;
-}
-export interface TabelaKorisnika {
-  vrednosti : string[],
-  omoguceno : string
-}
-interface Korisnik{
-  korisnik : string;
-  id : string;
-  tid : string;
-  cid : string;
-};
-interface ConvActiv{
-  conv : Partial<ConversationReference>;
-  act : Activity;
-};
+import { getInfoFromTable, prijaviNaPoslednjeOdgovaranje } from "./SheetsFunctions";
+import * as adaptivneFunkcije from "./adaptivneFunkcije";
+import * as sheetsFunctions from "./SheetsFunctions";
+import { TabelaKorisnika } from "./AdaptiveCardsInterfaces/TabelaKorisnika";
+
+import { ConvActiv } from "./ConvActiv";
 export class TeamsBot extends TeamsActivityHandler {
-  // record the likeCount
-  likeCountObj: { likeCount: number };
-  conversationReferenceList: ConvActiv[];
   constructor() {
     super();
-    this.likeCountObj = { likeCount: 0 };
-    this.conversationReferenceList = [];
     
-
     this.onMessage(async (context, next) => {
       console.log("Running with Message Activity.");
 
       let txt = context.activity.text;
       const removedMentionText = TurnContext.removeRecipientMention(context.activity);
+
       if (removedMentionText) {
-        // Remove the line break
         txt = removedMentionText.toLowerCase().replace(/\n|\r/g, "").trim();
       }
 
-      // Trigger command by IM text
       switch (txt) {
-        case "welcome": {
-          const card = AdaptiveCards.declareWithoutData(rawProfesorPocetna).render();
+        case "profesor":{
+          const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorPocetna).render();
           await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
           break;
         }
-        case "learn": {
-          this.likeCountObj.likeCount = 0;
-          const card = AdaptiveCards.declare<DataInterface>(rawLearnCard).render(this.likeCountObj);
+        case "student":{
+          const card = AdaptiveCards.declare<TabelaKorisnika>(rawStudentPocetna).render();
           await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
-          break;
-        }
-        case "podaci":{
-          let sheet = await getInfoFromTable("1BLF6J_ORoPdsw_V868zrAI6TVLDsbn9ewSU9WlGolD4");
-          let data = sheet.data.values;
-          let odgovor = data[0][0] + " " + data[0][1] + " " + data[0][2] + " " + data[0][3] + " " + data[0][4] + "\n";
-          data.forEach((e, i) => {
-            if(i != 0){
-              odgovor += data[i][0] + " " + data[i][1] + " " + data[i][2] + " " + data[i][3] + " " + data[i][4] + "\n";
-            }
-          });
-          await context.sendActivity(odgovor);
-          break;
-        }
-        case "sledeci":{
-          let sheet = await getInfoFromTable("1BLF6J_ORoPdsw_V868zrAI6TVLDsbn9ewSU9WlGolD4");
-          let data = sheet.data.values;
-          let student = undefined;
-          data.forEach((e, i)=>{
-            if(!student && e[4] == "FALSE"){
-              student = e[0] + " "+ e[1] + " " + e[2] + " " + e[3]
-            }
-          });
-          await context.sendActivity("Sledeci student je : " + student);
-          break;
-        } case "dodaj":{
-          let user = context.activity.from.name;
-          let userID = context.activity.from.aadObjectId;
-          let conversationID = context.activity.conversation.id;
-          //let tID = context.activity.channelData.Tenant.Id;
-          let kor : Korisnik;
-          kor = {korisnik : user, id : userID, cid : conversationID, tid : JSON.stringify(context.activity.channelData)};
-          
-          //this.listaKorisnika.push(kor);
-          const convref = TurnContext.getConversationReference(context.activity);
-          let a : ConvActiv= {conv : convref, act : context.activity};
-          this.conversationReferenceList.push(a);
-
-          await context.sendActivity(`Ime : ${user}`);
-          await context.sendActivity(`ID : ${userID}`);
-          await context.sendActivity(`Conversation id :  ${conversationID}`);
-          await context.sendActivity(`Tenant id :  ${JSON.stringify(context.activity.channelData)}`);
-          break;
-        } case "obavesti":{
-          await this.messageAllMembersAsync(context);
           break;
         }
         default:{
@@ -120,7 +53,6 @@ export class TeamsBot extends TeamsActivityHandler {
         }
       }
 
-      // By calling next() you ensure that the next BotHandler is run.
       await next();
     });
     
@@ -128,8 +60,9 @@ export class TeamsBot extends TeamsActivityHandler {
       const membersAdded = context.activity.membersAdded;
       for (let cnt = 0; cnt < membersAdded.length; cnt++) {
         if (membersAdded[cnt].id) {
-          const card = AdaptiveCards.declareWithoutData(rawWelcomeCard).render();
-          await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+          /*const card = AdaptiveCards.declareWithoutData(rawWelcomeCard).render();
+          await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });*/
+          await context.sendActivity("Dobro došli");
           break;
         }
       }
@@ -137,60 +70,34 @@ export class TeamsBot extends TeamsActivityHandler {
     });
 
     this.onTeamsChannelCreated(async (channelInfo: ChannelInfo, teamInfo: TeamInfo, turnContext : TurnContext, next: ()=> Promise<void>): Promise<void> =>{
-      const message = MessageFactory.text("Ja sam mala zaba");
-      await turnContext.sendActivity(message);
       await next();
     });
+
   }
   
   async messageAllMembersAsync(context : TurnContext) {
-   await this.conversationReferenceList.forEach(async cr =>{
-    context.adapter.continueConversation(cr.conv, async(contextn : TurnContext)=>{
-      await contextn.sendActivity("ZABAAAAAAAAAA");
+    const data = await sheetsFunctions.vratiPodatkeSaPoslednjegOdgovaranja();
+    await data.forEach(async row =>{
+      let cr : ConvActiv = JSON.parse(row[2]);
+      context.adapter.continueConversation(cr.conv, async(contextn : TurnContext)=>{
+        await contextn.sendActivity( row[0] + " : " + row[1]);
     });
-   });
+    });
     await context.sendActivity(MessageFactory.text('All messages have been sent.'));
   }
-  // Invoked when an action is taken on an Adaptive Card. The Adaptive Card sends an event to the Bot and this
-  // method handles that event.
   async onAdaptiveCardInvoke(
     context: TurnContext,
     invokeValue: AdaptiveCardInvokeValue
   ): Promise<AdaptiveCardInvokeResponse> {
-    // The verb "userlike" is sent from the Adaptive Card defined in adaptiveCards/learn.json
-    if (invokeValue.action.verb === "userlike") {
-      this.likeCountObj.likeCount++;
-      const card = AdaptiveCards.declare<DataInterface>(rawLearnCard).render(this.likeCountObj);
-      await context.updateActivity({
-        type: "message",
-        id: context.activity.replyToId,
-        attachments: [CardFactory.adaptiveCard(card)],
-      });
-      return { statusCode: 200, type: undefined, value: undefined };
-    }
     if(invokeValue.action.verb === "kreairajOdogovaranje"){
-        let id = await kreirajOdgovaranje();
+
+        let id = await adaptivneFunkcije.kreirajOdgovaranje();
 
         let odg : TabelaKorisnika;
         odg = {
-          vrednosti : ["asdasd",
-          "1232131",
-          "Pralina Pralinic",
-          "asdasd",
-          "1232131",
-          "Pralina Pralinic",
-          "asdasd",
-          "1232131",
-          "Pralina Pralinic",
-          "asdasd",
-          "1232131",
-          "Pralina Pralinic",
-          "asdasd",
-          "1232131",
-          "Pralina Pralinic"],
+          vrednosti : ["","","","","","","","","","","","","","",""],
           omoguceno : "TRUE"
         };
-
         const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorRed).render(odg);
         await context.updateActivity({
           type: "message",
@@ -199,22 +106,10 @@ export class TeamsBot extends TeamsActivityHandler {
         });
         return { statusCode: 200, type: undefined, value: undefined };
     }
-    if(invokeValue.action.verb === "obavestiSledeceg"){
-      let data = await preuzmiInformacijeOdgovaranja("");
-      console.log(data)
-      let student = undefined;
-      data.forEach((e, i)=>{
-        if(!student && e[4] == "FALSE"){
-          student = e[0] + " "+ e[1] + " " + e[2] + " " + e[3]
-        }
-      });
-      await context.sendActivity("Sledeci student je : " + student);
-      return { statusCode: 200, type: undefined, value: undefined };
-  }
     if(invokeValue.action.verb === "omoguci"){
-      let omoguci = await toggleOmoguceno();
+      let omoguci = await adaptivneFunkcije.toggleOmoguceno();
       let vrednost = {
-        vrednosti : ["zaa", "zaa", "zaa", "zaa","zaa","zaa","zaa","zaa","zaa","zaa","zaa","zaa","zaa","zaa","zaa"],
+        vrednosti : ["","","","","","","","","","","","","","",""],
         omoguceno : omoguci
       }
       const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorRed).render(vrednost);
@@ -223,6 +118,17 @@ export class TeamsBot extends TeamsActivityHandler {
         id: context.activity.replyToId,
         attachments: [CardFactory.adaptiveCard(card)],
       });
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
+    if( invokeValue.action.verb ==="prijaviStudent"){
+      let brIndeksa : string = (invokeValue.action.data.brojIndeksa == undefined ? "0" : invokeValue.action.data.brojIndeksa).toString();
+      let user = context.activity.from.name;
+
+      const convref = TurnContext.getConversationReference(context.activity);
+      let ca : ConvActiv= {conv : convref, act : context.activity};
+
+      let uspesno = await adaptivneFunkcije.prijaviSeNaOdgovaranje(ca, user, brIndeksa);
+      await context.sendActivity("Uspesno prijavljen na odgovaranje!"); // TODO kartica sa tabelom
       return { statusCode: 200, type: undefined, value: undefined };
     }
   }

@@ -9,57 +9,6 @@
             "wrap": true
         },
         {
-            "type": "Table",
-            "columns": [
-                {
-                    "width": 1
-                },
-                {
-                    "width": 1
-                },
-                {
-                    "width": 1
-                }
-            ],
-            "rows": [
-                {
-                    "type": "TableRow",
-                    "cells": [
-                        {
-                            "type": "TableCell",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "Broj indeksa",
-                                    "wrap": true
-                                }
-                            ]
-                        },
-                        {
-                            "type": "TableCell",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "Ime učesnika",
-                                    "wrap": true
-                                }
-                            ]
-                        },
-                        {
-                            "type": "TableCell",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "text": "Odgovarao",
-                                    "wrap": true
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
             "type": "ActionSet",
             "actions": [
                 {
