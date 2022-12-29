@@ -333,3 +333,27 @@ export async function vratiPoslednjeKorisnikeUTabeli() : Promise<{korisnici : st
 
     return {korisnici : vrednosti, omoguceno : omoguceno};
 }
+
+export async function vratiContextSvihNaPoslednjemOdogvaranju(){
+    let title = await vratiTitlePoslednjegOdgovaranja();
+
+    const auth = new google.auth.GoogleAuth({
+        keyFile: "credentials.json",
+        scopes : "https://www.googleapis.com/auth/spreadsheets",
+    });
+    const client = await auth.getClient();
+    const gsheet = google.sheets({version:"v4", auth: client});
+    let id_odg;
+    try{
+        id_odg = JSON.parse(fs.readFileSync("./id_odgovaranja.json", 'utf-8')).id;
+    } catch(err){
+        console.log(err);
+    }
+
+    let data = await gsheet.spreadsheets.values.get({
+        auth : auth,
+        spreadsheetId : id_odg,
+        range : title+"!D2:D",
+    });
+    return data.data.values;
+}

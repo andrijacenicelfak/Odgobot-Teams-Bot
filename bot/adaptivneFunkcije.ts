@@ -27,3 +27,12 @@ export async function karticaRedOdgovaranjaProfesor() {
     vrednost.omoguceno = pov.omoguceno;
     return vrednost;
 }
+
+export async function vratiSvePriavljeneKorisnikeNaPoslednjemOdgovaranju() {
+
+    let vrednosti  = await sf.vratiContextSvihNaPoslednjemOdogvaranju();
+    let nizContext : ConvActiv[] = vrednosti.map(value=>{
+        return JSON.parse(value[0]);
+    });
+    return nizContext;
+}

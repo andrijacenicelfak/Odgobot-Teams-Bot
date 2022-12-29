@@ -15,13 +15,14 @@ import {
 import rawProfesorPocetna from "./adaptiveCards/profesor_pocetna.json"
 import rawStudentPocetna from "./adaptiveCards/student_pocetna.json"
 import rawProfesorRed from "./adaptiveCards/profesor_red_odgovaranja.json"
-import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import rawProfesorObavestiSve from "./adaptiveCards/profesor_obavesti_sve.json"
+import rawStudentObavestenje from "./adaptiveCards/student_obavestenje.json"
+import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import { getInfoFromTable, prijaviNaPoslednjeOdgovaranje } from "./SheetsFunctions";
 import * as adaptivneFunkcije from "./adaptivneFunkcije";
 import * as sheetsFunctions from "./SheetsFunctions";
 import { TabelaKorisnika } from "./AdaptiveCardsInterfaces/TabelaKorisnika";
-
+import { ObavestenjeStudenta } from "./AdaptiveCardsInterfaces/ObavestenjeStudenta";
 import { ConvActiv } from "./ConvActiv";
 export class TeamsBot extends TeamsActivityHandler {
   constructor() {
@@ -132,8 +133,22 @@ export class TeamsBot extends TeamsActivityHandler {
 
       return { statusCode: 200, type: undefined, value: undefined };
     }
-    if(invokeValue.action.verb === ""){
+    if(invokeValue.action.verb === "karticaObavestiSve"){
+      const card = AdaptiveCards.declare(rawProfesorObavestiSve).render();
+      await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
+    if(invokeValue.action.verb === "obavestiSve"){
+      let message : string = (invokeValue.action.data.message == undefined ? "no message" : invokeValue.action.data.message).toString();
+      const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
+      let kontektsi = await adaptivneFunkcije.vratiSvePriavljeneKorisnikeNaPoslednjemOdgovaranju();
+      await kontektsi.forEach(async(cr)=>{
+        context.adapter.continueConversation(cr.conv, async(contextn : TurnContext)=>{
+          await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+        });
+      });
 
+      return { statusCode: 200, type: undefined, value: undefined };
     }
   }
 

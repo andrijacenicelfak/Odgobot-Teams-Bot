@@ -298,8 +298,9 @@
             "type": "ActionSet",
             "actions": [
                 {
-                    "type": "Action.Submit",
-                    "title": "Obavesti sve"
+                    "type": "Action.Execute",
+                    "title": "Obavesti sve",
+                    "verb": "karticaObavestiSve"
                 }
             ],
             "id": "6"
