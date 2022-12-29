@@ -108,10 +108,9 @@ export class TeamsBot extends TeamsActivityHandler {
     }
     if(invokeValue.action.verb === "omoguci"){
       let omoguci = await adaptivneFunkcije.toggleOmoguceno();
-      let vrednost = {
-        vrednosti : ["","","","","","","","","","","","","","",""],
-        omoguceno : omoguci
-      }
+      
+      let vrednost = await adaptivneFunkcije.karticaRedOdgovaranjaProfesor();
+
       const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorRed).render(vrednost);
       await context.updateActivity({
         type: "message",
@@ -128,7 +127,8 @@ export class TeamsBot extends TeamsActivityHandler {
       let ca : ConvActiv= {conv : convref, act : context.activity};
 
       let uspesno = await adaptivneFunkcije.prijaviSeNaOdgovaranje(ca, user, brIndeksa);
-      await context.sendActivity("Uspesno prijavljen na odgovaranje!"); // TODO kartica sa tabelom
+      await context.sendActivity("Uspesno prijavljen na odgovaranje!"); // TODO kartica sa tabelo
+
       return { statusCode: 200, type: undefined, value: undefined };
     }
   }

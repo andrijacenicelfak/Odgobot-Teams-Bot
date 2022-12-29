@@ -17,9 +17,8 @@ export async function prijaviSeNaOdgovaranje(ca : ConvActiv, user : string, inde
 }
 
 export async function karticaRedOdgovaranjaProfesor() {
-    let vrednost : TabelaKorisnika;
+    let vrednost : TabelaKorisnika = {vrednosti : [], omoguceno : ""};
     let pov = await sf.vratiPoslednjeKorisnikeUTabeli();
-    vrednost.vrednosti = [];
     pov.korisnici.forEach(v=>{
         vrednost.vrednosti.push(v[0]);
         vrednost.vrednosti.push(v[1]);

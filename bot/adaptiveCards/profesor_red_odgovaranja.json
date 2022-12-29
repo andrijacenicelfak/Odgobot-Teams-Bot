@@ -32,7 +32,6 @@
                             "wrap": true
                         }
                     ],
-                    "horizontalAlignment": "Center",
                     "verticalContentAlignment": "Center"
                 }
             ]
@@ -59,7 +58,7 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "Broj indeksa",
+                                    "text": "Ime učesnika",
                                     "wrap": true
                                 }
                             ]
@@ -69,7 +68,8 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "Ime učesnika",
+                                    "text": "Broj indeksa",
+
                                     "wrap": true
                                 }
                             ]

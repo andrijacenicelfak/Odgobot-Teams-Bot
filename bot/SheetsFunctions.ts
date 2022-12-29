@@ -192,7 +192,7 @@ export async function kreirajSheetZaOdgovaranje() : Promise<string> {
                 valueInputOption : 'RAW',
                 requestBody : {
                     values : [
-                        ["Ime", "Index", "Context"]
+                        ["Ime", "Index", "Odgovarao", "Context"]
                     ],
                 }
             });
@@ -229,11 +229,11 @@ export async function vratiTitlePoslednjegOdgovaranja() : Promise <string>{
         console.log(err);
     }
 
-      const data = await gsheet.spreadsheets.values.get({
+    const data = await gsheet.spreadsheets.values.get({
         auth : auth,
         spreadsheetId : id_odg,
         range: "odg!C1",
-    })
+    });
     title = data.data.values[0][0]
     return title;
 }
@@ -262,7 +262,7 @@ export async function prijaviNaPoslednjeOdgovaranje(ca : string, user : string, 
         valueInputOption : 'RAW',
         requestBody : {
             values : [
-                [user, index, ca]
+                [user, index, "False", ca]
             ]
         }
     });
@@ -295,7 +295,41 @@ export async function vratiPodatkeSaPoslednjegOdgovaranja(){
     return data.data.values;
 }
 
-export async function vratiPoslednjeKorisnikeUTabeli() : Promise<{korisnici : string[], omoguceno : string}>{
+export async function vratiPoslednjeKorisnikeUTabeli() : Promise<{korisnici : string[][], omoguceno : string}>{
+    const auth = new google.auth.GoogleAuth({
+        keyFile: "credentials.json",
+        scopes : "https://www.googleapis.com/auth/spreadsheets",
+    });
+    const client = await auth.getClient();
+    const gsheet = google.sheets({version:"v4", auth: client});
+    let id_odg;
+    try{
+        id_odg = JSON.parse(fs.readFileSync("./id_odgovaranja.json", 'utf-8')).id;
+    } catch(err){
+        console.log(err);
+    }
 
-    return {korisnici : ["asdad", "asdadas"], omoguceno : "TRUE"};
+    const data = await gsheet.spreadsheets.values.get({
+        auth : auth,
+        spreadsheetId : id_odg,
+        range: "odg!C1:D1",
+    });
+    let title = data.data.values[0][0];
+    let omoguceno = data.data.values[0][1];
+
+    const data2 = await gsheet.spreadsheets.values.get({
+        auth : auth,
+        spreadsheetId : id_odg,
+        range: title+"!A2:C"
+    });
+
+    let vrednosti = [];
+    data2.data.values.forEach((value, index)=>{
+        if(index >= data2.data.values.length - 5)
+            vrednosti.push(value);
+    });
+    while(vrednosti.length < 5)
+        vrednosti.push(["", "", ""]);
+
+    return {korisnici : vrednosti, omoguceno : omoguceno};
 }
