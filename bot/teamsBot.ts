@@ -16,6 +16,7 @@ import rawProfesorPocetna from "./adaptiveCards/profesor_pocetna.json"
 import rawStudentPocetna from "./adaptiveCards/student_pocetna.json"
 import rawProfesorRed from "./adaptiveCards/profesor_red_odgovaranja.json"
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
+import rawProfesorObavestiSve from "./adaptiveCards/profesor_obavesti_sve.json"
 import { getInfoFromTable, prijaviNaPoslednjeOdgovaranje } from "./SheetsFunctions";
 import * as adaptivneFunkcije from "./adaptivneFunkcije";
 import * as sheetsFunctions from "./SheetsFunctions";
@@ -108,7 +109,7 @@ export class TeamsBot extends TeamsActivityHandler {
     }
     if(invokeValue.action.verb === "omoguci"){
       let omoguci = await adaptivneFunkcije.toggleOmoguceno();
-      
+
       let vrednost = await adaptivneFunkcije.karticaRedOdgovaranjaProfesor();
 
       const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorRed).render(vrednost);
@@ -130,6 +131,9 @@ export class TeamsBot extends TeamsActivityHandler {
       await context.sendActivity("Uspesno prijavljen na odgovaranje!"); // TODO kartica sa tabelo
 
       return { statusCode: 200, type: undefined, value: undefined };
+    }
+    if(invokeValue.action.verb === ""){
+
     }
   }
 

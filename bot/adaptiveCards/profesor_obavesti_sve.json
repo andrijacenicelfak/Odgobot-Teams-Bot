@@ -1,0 +1,24 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "Input.Text",
+            "placeholder": "Message",
+            "isMultiline": true,
+            "id": "message"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Execute",
+                    "title": "Obavesti sve učesnike",
+                    "verb" : "obavestiSve"
+                }
+            ],
+            "id": "2"
+        }
+    ]
+}
