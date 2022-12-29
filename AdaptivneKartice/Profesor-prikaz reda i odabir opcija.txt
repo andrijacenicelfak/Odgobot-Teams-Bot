@@ -1,0 +1,198 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Naslov odgovaranja\n",
+            "wrap": true,
+            "id": "1"
+        },
+        {
+            "type": "Input.Toggle",
+            "title": "Dodavanje korisnika",
+            "id": "2"
+        },
+        {
+            "type": "Table",
+            "columns": [
+                {
+                    "width": 1
+                },
+                {
+                    "width": 1
+                },
+                {
+                    "width": 1
+                }
+            ],
+            "rows": [
+                {
+                    "type": "TableRow",
+                    "cells": [
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Broj indeksa",
+                                    "wrap": true,
+                                    "id": "111"
+                                }
+                            ],
+                            "id": "11"
+                        },
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Ime učesnika",
+                                    "wrap": true,
+                                    "id": "122"
+                                }
+                            ],
+                            "id": "12"
+                        },
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Odgovarao",
+                                    "wrap": true,
+                                    "id": "133"
+                                }
+                            ],
+                            "id": "13"
+                        }
+                    ],
+                    "id": "10"
+                },
+                {
+                    "type": "TableRow",
+                    "cells": [
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "17905",
+                                    "wrap": true,
+                                    "id": "211"
+                                }
+                            ],
+                            "id": "21"
+                        },
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Milica Rangelov",
+                                    "wrap": true,
+                                    "id": "222"
+                                }
+                            ],
+                            "id": "22"
+                        },
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "Input.Toggle",
+                                    "title": "New Input.Toggle",
+                                    "id": "233"
+                                }
+                            ],
+                            "id": "23"
+                        }
+                    ],
+                    "id": "20"
+                },
+                {
+                    "type": "TableRow",
+                    "cells": [
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "18042",
+                                    "wrap": true,
+                                    "id": "311"
+                                }
+                            ],
+                            "id": "31"
+                        },
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Andrija Cenić",
+                                    "wrap": true,
+                                    "id": "322"
+                                }
+                            ],
+                            "id": "32"
+                        },
+                        {
+                            "type": "TableCell",
+                            "items": [
+                                {
+                                    "type": "Input.Toggle",
+                                    "title": "New Input.Toggle",
+                                    "id": "333"
+                                }
+                            ],
+                            "id": "33"
+                        }
+                    ],
+                    "id": "30"
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Obavesti sledećeg na redu"
+                }
+            ],
+            "id": "3"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Ukloni sledećeg iz reda"
+                }
+            ],
+            "id": "4"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Obavesti poslednjeg"
+                }
+            ],
+            "id": "5"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Obavesti sve"
+                }
+            ],
+            "id": "6"
+        }
+    ]
+}

@@ -1,0 +1,34 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Odgovaranje: Naslov odgovaranja",
+            "wrap": true,
+            "id": "1"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Prikaži odgovaranje"
+                    
+                }
+            ],
+            "id": "2"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Uključi se u odgovaranje"
+                }
+            ],
+            "id": "3"
+        }
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Prosečno vreme odgovaranja: HH:MM",
+            "wrap": true,
+            "id": "1"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Očekivano vreme dolaska na red: HH:MM",
+            "wrap": true,
+            "id": "2"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Redni broj na listi: br",
+            "wrap": true,
+            "id": "3"
+        },
+        {
+            "type": "ActionSet",
+            "id": "4",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Prikaži red čekanja"
+                }
+            ]
+        }
+    ]
+}
