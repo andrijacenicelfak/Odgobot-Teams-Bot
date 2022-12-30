@@ -26,7 +26,7 @@ export class SheetFunctions{
         this.gsheet = google.sheets({version:"v4", auth: this.client});
     }
 
-    private async getDataFromSpredsheet(range:string){
+    private async getDataFromSpreadsheet(range:string){
 
         if(this.auth === undefined)
             await this.createCredentials();
@@ -41,7 +41,7 @@ export class SheetFunctions{
         return data;
     }
 
-    private async updateDataSpradeSheet(range: string, value){
+    private async updateDataSpreadSheet(range: string, value){
         
         if(this.auth === undefined)
             await this.createCredentials();
@@ -98,12 +98,12 @@ export class SheetFunctions{
     }
 
     public async togglePoslednjeOdgovaranje(){    
-        const data = await this.getDataFromSpredsheet("odg");
+        const data = await this.getDataFromSpreadsheet("odg");
 
         let value = data.data.values[data.data.values.length-1];
         value[1] = value[1] === "FALSE" ? "TRUE" : "FALSE";
 
-        await this.updateDataSpradeSheet("odg!A"+ data.data.values.length + ":B"+data.data.values.length,value);
+        await this.updateDataSpreadSheet("odg!A"+ data.data.values.length + ":B"+data.data.values.length,value);
 
         return value[1];
     }
@@ -130,7 +130,7 @@ export class SheetFunctions{
     public async vratiTitlePoslednjegOdgovaranja() : Promise<string>{
         let title = "";
 
-        const data = await this.getDataFromSpredsheet("odg!C1");
+        const data = await this.getDataFromSpreadsheet("odg!C1");
         title = data.data.values[0][0];
         return title;
     }
@@ -159,18 +159,18 @@ export class SheetFunctions{
 
         let title = await this.vratiTitlePoslednjegOdgovaranja();
 
-        const data = await this.getDataFromSpredsheet(title + "!A2:C");
+        const data = await this.getDataFromSpreadsheet(title + "!A2:C");
 
         return data.data.values;
     }
 
     public async vratiPoslednjeKorisnikeUTabeli() : Promise<{korisnici : string[][], omoguceno : string}>{
 
-        const data = await this.getDataFromSpredsheet("odg!C1:D1");
+        const data = await this.getDataFromSpreadsheet("odg!C1:D1");
         let title = data.data.values[0][0];
         let omoguceno = data.data.values[0][1];
 
-        const data2 = await this.getDataFromSpredsheet(title+"!A2:C");
+        const data2 = await this.getDataFromSpreadsheet(title+"!A2:C");
 
         let vrednosti = [];
 
@@ -179,9 +179,6 @@ export class SheetFunctions{
                 vrednosti.push(value);
         });
 
-        console.log("ALOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
-        console.log(vrednosti);
-        console.log(vrednosti.length);
         while(vrednosti.length < 5)
             vrednosti.push(["", "", ""]);
         
@@ -191,7 +188,7 @@ export class SheetFunctions{
     public async vratiContextSvihNaPoslednjemOdgovaranju(){
         let title = await this.vratiTitlePoslednjegOdgovaranja();
 
-        const data = await this.getDataFromSpredsheet(title+"!D2:D");
+        const data = await this.getDataFromSpreadsheet(title+"!D2:D");
 
         return data.data.values;
     }
