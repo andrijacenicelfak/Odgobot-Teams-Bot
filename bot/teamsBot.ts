@@ -1,5 +1,6 @@
 import { default as axios } from "axios";
 import * as querystring from "querystring";
+import { AdaptiveFunctions} from "./classes/AdaptiveFunctions";
 import {
   TeamsActivityHandler,
   CardFactory,
@@ -25,9 +26,11 @@ import { TabelaKorisnika } from "./AdaptiveCardsInterfaces/TabelaKorisnika";
 import { ObavestenjeStudenta } from "./AdaptiveCardsInterfaces/ObavestenjeStudenta";
 import { ConvActiv } from "./ConvActiv";
 export class TeamsBot extends TeamsActivityHandler {
+  private adaptiveFunctions : AdaptiveFunctions;
   constructor() {
     super();
     
+    this.adaptiveFunctions = new AdaptiveFunctions();
     this.onMessage(async (context, next) => {
       console.log("Running with Message Activity.");
 
@@ -78,7 +81,8 @@ export class TeamsBot extends TeamsActivityHandler {
   }
   
   async messageAllMembersAsync(context : TurnContext) {
-    const data = await sheetsFunctions.vratiPodatkeSaPoslednjegOdgovaranja();
+    //const data = await sheetsFunctions.vratiPodatkeSaPoslednjegOdgovaranja();
+    const data = await this.adaptiveFunctions.sf.vratiPodatkeSaPoslednjegOdgovaranja();
     await data.forEach(async row =>{
       let cr : ConvActiv = JSON.parse(row[2]);
       context.adapter.continueConversation(cr.conv, async(contextn : TurnContext)=>{
@@ -93,7 +97,7 @@ export class TeamsBot extends TeamsActivityHandler {
   ): Promise<AdaptiveCardInvokeResponse> {
     if(invokeValue.action.verb === "kreairajOdogovaranje"){
 
-        let id = await adaptivneFunkcije.kreirajOdgovaranje();
+        let id = await this.adaptiveFunctions.kreirajOdgovaranje();
 
         let odg : TabelaKorisnika;
         odg = {
@@ -109,9 +113,9 @@ export class TeamsBot extends TeamsActivityHandler {
         return { statusCode: 200, type: undefined, value: undefined };
     }
     if(invokeValue.action.verb === "omoguci"){
-      let omoguci = await adaptivneFunkcije.toggleOmoguceno();
+      let omoguci = await this.adaptiveFunctions.toggleOmoguceno();
 
-      let vrednost = await adaptivneFunkcije.karticaRedOdgovaranjaProfesor();
+      let vrednost = await this.adaptiveFunctions.karticaRedOdgovaranjaProfesor();
 
       const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorRed).render(vrednost);
       await context.updateActivity({
@@ -128,7 +132,7 @@ export class TeamsBot extends TeamsActivityHandler {
       const convref = TurnContext.getConversationReference(context.activity);
       let ca : ConvActiv= {conv : convref, act : context.activity};
 
-      let uspesno = await adaptivneFunkcije.prijaviSeNaOdgovaranje(ca, user, brIndeksa);
+      let uspesno = await this.adaptiveFunctions.prijaviSeNaOdgovaranje(ca, user, brIndeksa);
       await context.sendActivity("Uspesno prijavljen na odgovaranje!"); // TODO kartica sa tabelo
 
       return { statusCode: 200, type: undefined, value: undefined };
@@ -141,7 +145,7 @@ export class TeamsBot extends TeamsActivityHandler {
     if(invokeValue.action.verb === "obavestiSve"){
       let message : string = (invokeValue.action.data.message == undefined ? "no message" : invokeValue.action.data.message).toString();
       const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
-      let kontektsi = await adaptivneFunkcije.vratiSvePriavljeneKorisnikeNaPoslednjemOdgovaranju();
+      let kontektsi = await this.adaptiveFunctions.vratiSvePriavljeneKorisnikeNaPoslednjemOdgovaranju();
       await kontektsi.forEach(async(cr)=>{
         context.adapter.continueConversation(cr.conv, async(contextn : TurnContext)=>{
           await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
