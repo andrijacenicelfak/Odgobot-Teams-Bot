@@ -58,7 +58,7 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "Broj Indeksa",
+                                    "text": "Ime i prezime",
                                     "wrap": true,
                                     "horizontalAlignment": "Center",
                                     "weight": "Bolder"
@@ -70,7 +70,7 @@
                             "items": [
                                 {
                                     "type": "TextBlock",
-                                    "text": "Ime i prezime",
+                                    "text": "Broj Indeksa",
                                     "wrap": true,
                                     "horizontalAlignment": "Center",
                                     "weight": "Bolder"

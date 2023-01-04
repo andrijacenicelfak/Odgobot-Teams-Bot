@@ -221,17 +221,14 @@ export class SheetFunctions{
                 }
             }
         })
-
+        // TODO :: Ne racuna se lepo vreme
         let average = sum / (dates.length-1); // milisekunde
-        let last = 0;
+        let last : number = 0;
         let values = [];
         for(let i = 0; i < data.data.values.length; i++){
-            if(data.data.values[i][2] === "TRUE")
-                last = Number.parseInt(data.data.values[i][2]);
-            else{
+            if(data.data.values[i][2] === "FALSE"){
                 last += average;
-                console.log(last / 60000);
-                values.push([data.data.values[i][0], data.data.values[i][1], "" + (last / 60000)]); // vraca u broj minuta
+                values.push([data.data.values[i][0], data.data.values[i][1], "" + (last / (60 * 1000))]); // vraca u broj minuta
             }
         }
         return values;
