@@ -57,5 +57,8 @@ export class AdaptiveFunctions{
         return stab;
     }
 
+    public async zavrsiOdgovaranje(userID : String) : Promise<boolean>{
+        return await this.sf.zavrsiOdgovaranje(userID);
+    }
 
 }

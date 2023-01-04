@@ -230,9 +230,34 @@ export class SheetFunctions{
                 last = Number.parseInt(data.data.values[i][2]);
             else{
                 last += average;
-                values.push(data.data.values[i][0], data.data.values[i][1], Math.ceil(last / 60000)); // vraca u broj minuta
+                console.log(last / 60000);
+                values.push([data.data.values[i][0], data.data.values[i][1], "" + (last / 60000)]); // vraca u broj minuta
             }
         }
         return values;
     }
+
+    public async zavrsiOdgovaranje(userID: String)  : Promise<boolean>{
+        let title = await this.vratiTitlePoslednjegOdgovaranja();
+        const data = await this.getDataFromSpreadsheet(title+"!A2:E");
+        let index = -1;
+
+        for(let i = 0; i < data.data.values.length && index === -1; i++){
+            let ca = JSON.parse(data.data.values[i][3]);
+            if(ca.conv.user.id === userID && data.data.values[i][2] === "FALSE"){
+                index = i;
+            }
+        }
+        if(index === -1)
+            return false;
+        let value = data.data.values[index];
+        index+=2;
+        value[2] = "TRUE";
+        value[4] = Date.now();
+        let range = title+"!A" + index+ ":E" + index;
+        console.log(range);
+        await this.updateDataSpreadSheet(range, value);
+        return true;
+    }
+
 }

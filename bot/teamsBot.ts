@@ -95,7 +95,6 @@ export class TeamsBot extends TeamsActivityHandler {
     invokeValue: AdaptiveCardInvokeValue
   ): Promise<AdaptiveCardInvokeResponse> {
     if(invokeValue.action.verb === "kreairajOdogovaranje"){
-
         let id = await this.adaptiveFunctions.kreirajOdgovaranje();
 
         let odg : TabelaKorisnika;
@@ -111,6 +110,7 @@ export class TeamsBot extends TeamsActivityHandler {
         });
         return { statusCode: 200, type: undefined, value: undefined };
     }
+
     if(invokeValue.action.verb === "omoguci"){
       let omoguci = await this.adaptiveFunctions.toggleOmoguceno();
 
@@ -124,6 +124,7 @@ export class TeamsBot extends TeamsActivityHandler {
       });
       return { statusCode: 200, type: undefined, value: undefined };
     }
+
     if( invokeValue.action.verb ==="prijaviStudent"){
       let brIndeksa : string = (invokeValue.action.data.brojIndeksa == undefined ? "0" : invokeValue.action.data.brojIndeksa).toString();
       let user = context.activity.from.name;
@@ -143,6 +144,7 @@ export class TeamsBot extends TeamsActivityHandler {
       });
       return { statusCode: 200, type: undefined, value: undefined };
     }
+
     if(invokeValue.action.verb == "prikaziTabeluStudent"){
       let data = await this.adaptiveFunctions.vratiTriSledecaZaOdgovaranje();
       const card = AdaptiveCards.declare<StudentTabela>(rawStudentTabela).render(data);
@@ -153,6 +155,7 @@ export class TeamsBot extends TeamsActivityHandler {
       });
       return { statusCode: 200, type: undefined, value: undefined };
     }
+
      if(invokeValue.action.verb == "osveziTabeluStudenata"){
       let data = await this.adaptiveFunctions.vratiTriSledecaZaOdgovaranje();
       const card = AdaptiveCards.declare<StudentTabela>(rawStudentTabela).render(data);
@@ -169,6 +172,7 @@ export class TeamsBot extends TeamsActivityHandler {
       await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
       return { statusCode: 200, type: undefined, value: undefined };
     }
+
     if(invokeValue.action.verb === "obavestiSve"){
       let message : string = (invokeValue.action.data.message == undefined ? "no message" : invokeValue.action.data.message).toString();
       const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
@@ -178,9 +182,19 @@ export class TeamsBot extends TeamsActivityHandler {
           await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
         });
       });
-
       return { statusCode: 200, type: undefined, value: undefined };
     }
+    if(invokeValue.action.verb == "zavrsiOdgovaranje"){
+
+      const convref = TurnContext.getConversationReference(context.activity);
+      let zavrseno : boolean = await this.adaptiveFunctions.zavrsiOdgovaranje(convref.user.id);
+      if(zavrseno)
+        await context.sendActivity("Uspesno zavrseno!");
+      else
+        await context.sendActivity("Neuspesno!");
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
+
   }
 
   // Message extension Code
