@@ -1,4 +1,4 @@
-import {google} from 'googleapis';
+import {google, sheets_v4} from 'googleapis';
 import * as fs from 'fs';
 
 export class SheetFunctions{
@@ -6,7 +6,7 @@ export class SheetFunctions{
     public id_odgovaranja:string;
     public auth;
     public client;
-    public gsheet;
+    public gsheet : sheets_v4.Sheets | undefined;
 
     constructor(){
         
@@ -76,7 +76,7 @@ export class SheetFunctions{
                     valueInputOption : 'RAW',
                     requestBody : {
                         values : [
-                            ["Ime", "Index", "Odgovarao", "Context"]
+                            ["Ime", "Index", "Odgovarao", "Context", "Vreme Odgovaranja"]
                         ],
                     }
                 });
@@ -148,7 +148,7 @@ export class SheetFunctions{
             valueInputOption : 'RAW',
             requestBody : {
                 values : [
-                    [user, index, "False", ca]
+                    [user, index, "FALSE", ca]
                 ]
             }
         });
@@ -191,5 +191,48 @@ export class SheetFunctions{
         const data = await this.getDataFromSpreadsheet(title+"!D2:D");
 
         return data.data.values;
+    }
+
+    public async vratiPoslednjStudenteZaTrenutnoOdgovaranje() : Promise<string[][]>{
+        let title = await this.vratiTitlePoslednjegOdgovaranja();
+
+        const data = await this.getDataFromSpreadsheet(title+"!A2:E");
+        if(data.data.values.length < 4){
+            let values = [];
+            data.data.values.forEach(e => {
+                if(e[2] === "FALSE")
+                    values.push([e[0], e[1], "?"]);
+            });
+            while(values.length < 3)
+                values.push(["", "", ""]);
+            return values;
+        }
+        let dates : Date[] = [];
+        let odgovarali = [];
+        let sum = 0;
+        data.data.values.forEach(e=>{
+            if(e[2] === "TRUE"){
+                let  ndate = new Date();
+                ndate.setTime(Number.parseInt(e[4]));
+                dates.push(ndate);
+                odgovarali.push(e);
+                if(dates.length > 0){
+                    sum = ndate.getTime() - dates[dates.length-1].getTime();
+                }
+            }
+        })
+
+        let average = sum / (dates.length-1); // milisekunde
+        let last = 0;
+        let values = [];
+        for(let i = 0; i < data.data.values.length; i++){
+            if(data.data.values[i][2] === "TRUE")
+                last = Number.parseInt(data.data.values[i][2]);
+            else{
+                last += average;
+                values.push(data.data.values[i][0], data.data.values[i][1], Math.ceil(last / 60000)); // vraca u broj minuta
+            }
+        }
+        return values;
     }
 }

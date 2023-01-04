@@ -2,9 +2,9 @@
 import { SheetFunctions } from "./SheetFunctions";
 import { ConvActiv } from "../ConvActiv";
 import { TabelaKorisnika } from "../AdaptiveCardsInterfaces/TabelaKorisnika";
+import { StudentTabela } from "../AdaptiveCardsInterfaces/StudentTabela";
 
 export class AdaptiveFunctions{
-
     public  sf: SheetFunctions;
 
     constructor(){
@@ -42,5 +42,20 @@ export class AdaptiveFunctions{
         });
         return nizContext;
     }
+
+    public async vratiTriSledecaZaOdgovaranje() {
+        let dataRows = await this.sf.vratiPoslednjStudenteZaTrenutnoOdgovaranje();
+        let data : string[] = [];
+        dataRows.forEach(e=>{
+            data.push(e[0]);
+            data.push(e[1]);
+            data.push(e[2]);
+        })
+        let stab : StudentTabela = {
+            data : data
+        }
+        return stab;
+    }
+
 
 }

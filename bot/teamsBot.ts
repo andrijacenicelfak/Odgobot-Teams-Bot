@@ -13,18 +13,17 @@ import {
   TeamInfo,
   MessageFactory,
 } from "botbuilder";
-import rawProfesorPocetna from "./adaptiveCards/profesor_pocetna.json"
-import rawStudentPocetna from "./adaptiveCards/student_pocetna.json"
-import rawProfesorRed from "./adaptiveCards/profesor_red_odgovaranja.json"
-import rawProfesorObavestiSve from "./adaptiveCards/profesor_obavesti_sve.json"
-import rawStudentObavestenje from "./adaptiveCards/student_obavestenje.json"
+import rawProfesorPocetna from "./adaptiveCards/profesor_pocetna.json";
+import rawStudentPocetna from "./adaptiveCards/student_pocetna.json";
+import rawProfesorRed from "./adaptiveCards/profesor_red_odgovaranja.json";
+import rawProfesorObavestiSve from "./adaptiveCards/profesor_obavesti_sve.json";
+import rawStudentObavestenje from "./adaptiveCards/student_obavestenje.json";
+import rawStudentTabela from "./adaptiveCards/student_tabela.json";
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
-import { getInfoFromTable, prijaviNaPoslednjeOdgovaranje } from "./SheetsFunctions";
-import * as adaptivneFunkcije from "./adaptivneFunkcije";
-import * as sheetsFunctions from "./SheetsFunctions";
 import { TabelaKorisnika } from "./AdaptiveCardsInterfaces/TabelaKorisnika";
 import { ObavestenjeStudenta } from "./AdaptiveCardsInterfaces/ObavestenjeStudenta";
 import { ConvActiv } from "./ConvActiv";
+import { StudentTabela } from "./AdaptiveCardsInterfaces/StudentTabela";
 export class TeamsBot extends TeamsActivityHandler {
   private adaptiveFunctions : AdaptiveFunctions;
   constructor() {
@@ -133,10 +132,38 @@ export class TeamsBot extends TeamsActivityHandler {
       let ca : ConvActiv= {conv : convref, act : context.activity};
 
       let uspesno = await this.adaptiveFunctions.prijaviSeNaOdgovaranje(ca, user, brIndeksa);
-      await context.sendActivity("Uspesno prijavljen na odgovaranje!"); // TODO kartica sa tabelo
 
+      //await context.sendActivity("Uspesno prijavljen na odgovaranje!"); // TODO kartica sa tabelom
+      let data = await this.adaptiveFunctions.vratiTriSledecaZaOdgovaranje();
+      const card = AdaptiveCards.declare<StudentTabela>(rawStudentTabela).render(data);
+      await context.sendActivity({
+        type: "message",
+        id: context.activity.replyToId,
+        attachments: [CardFactory.adaptiveCard(card)],
+      });
       return { statusCode: 200, type: undefined, value: undefined };
     }
+    if(invokeValue.action.verb == "prikaziTabeluStudent"){
+      let data = await this.adaptiveFunctions.vratiTriSledecaZaOdgovaranje();
+      const card = AdaptiveCards.declare<StudentTabela>(rawStudentTabela).render(data);
+      await context.sendActivity({
+        type: "message",
+        id: context.activity.replyToId,
+        attachments: [CardFactory.adaptiveCard(card)],
+      });
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
+     if(invokeValue.action.verb == "osveziTabeluStudenata"){
+      let data = await this.adaptiveFunctions.vratiTriSledecaZaOdgovaranje();
+      const card = AdaptiveCards.declare<StudentTabela>(rawStudentTabela).render(data);
+      await context.updateActivity({
+        type: "message",
+        id: context.activity.replyToId,
+        attachments: [CardFactory.adaptiveCard(card)],
+      });
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
+    
     if(invokeValue.action.verb === "karticaObavestiSve"){
       const card = AdaptiveCards.declare(rawProfesorObavestiSve).render();
       await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
