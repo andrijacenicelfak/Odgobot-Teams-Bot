@@ -260,7 +260,19 @@
                 },
                 {
                     "type": "Column",
-                    "width": "stretch"
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.Execute",
+                                    "title": "Odjavi se sa odgovaranja",
+                                    "verb": "odjava_studenta"
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         }

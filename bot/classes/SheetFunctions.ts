@@ -97,6 +97,17 @@ export class SheetFunctions{
 
     }
 
+    private async deleteRow(request){
+        if(this.auth === undefined)
+        await this.createCredentials();
+
+        await this.gsheet.spreadsheets.batchUpdate(request, async (err, response) => {
+            if (err) {
+                console.log("Error, nije obrisan red");            
+            }
+        });
+    }
+
     public async togglePoslednjeOdgovaranje(){    
         const data = await this.getDataFromSpreadsheet("odg");
 
@@ -287,6 +298,51 @@ export class SheetFunctions{
             }
         }
         return context;
+    }
+
+    public async odjavaStudenta(userId:String) : Promise<boolean>{
+        let title = await this.vratiTitlePoslednjegOdgovaranja();
+        let data = await this.getDataFromSpreadsheet(title + "!A2:E");
+        let uspesno: boolean = false;
+        let index = -1;
+        for(let i = 0; i < data.data.values.length; i++){
+            let ca = JSON.parse(data.data.values[i][3]);
+            if(ca.conv.user.id === userId){
+               index = i;
+               uspesno = true;
+               break;
+            }
+        }
+        if (uspesno){
+
+            const request = {
+                spreadsheetId: this.id_odgovaranja,
+                ranges: [title],  
+                includeGridData: false,  
+            
+                auth: this.auth,
+              };
+            const response = (await this.gsheet.spreadsheets.get(request)).data;  
+            let id =  response.sheets[0].properties.sheetId;
+            const request2 = {
+                "spreadsheetId": this.id_odgovaranja,
+                "requestBody": {
+                    "requests": [{
+                        "deleteDimension": {
+                            "range": {
+                              "sheetId": id,
+                              "dimension": "ROWS",
+                              "startIndex": index + 2,
+                              "endIndex": index + 3
+                            }
+                        }
+                    }]
+                }
+            };
+            console.log(id);
+            await this.deleteRow(request2);
+        }
+        return uspesno;
     }
 
 }

@@ -220,6 +220,17 @@ export class TeamsBot extends TeamsActivityHandler {
       });
       return { statusCode: 200, type: undefined, value: undefined };
     }
+    if(invokeValue.action.verb === "odjava_studenta"){
+      const convref = TurnContext.getConversationReference(context.activity);
+      let zavrseno : boolean = await this.adaptiveFunctions.odjavaStudenta(convref.user.id);
+      if(zavrseno){
+        await context.sendActivity("Uspesno ste se odjavili sa odgovaranja");
+      }
+      else{
+        await context.sendActivity("Niste se uspesno odjavili sa odgovaranja");
+      }
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
 
 
   }

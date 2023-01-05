@@ -72,4 +72,9 @@ export class AdaptiveFunctions{
         return kontekst;
     }
 
+    public async odjavaStudenta(userID : String): Promise<boolean>{
+        let rez = await this.sf.odjavaStudenta(userID);
+        return rez;
+    }
+
 }

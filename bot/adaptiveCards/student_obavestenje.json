@@ -19,7 +19,8 @@
             "actions": [
                 {
                     "type": "Action.Execute",
-                    "title": "Prikaži odgovaranje"
+                    "title": "Prikaži odgovaranje",
+                    "verb" : "prikaziTabeluStudent"
                 }
             ]
         }
