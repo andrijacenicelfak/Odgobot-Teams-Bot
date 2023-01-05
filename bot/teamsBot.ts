@@ -19,6 +19,7 @@ import rawProfesorRed from "./adaptiveCards/profesor_red_odgovaranja.json";
 import rawProfesorObavestiSve from "./adaptiveCards/profesor_obavesti_sve.json";
 import rawStudentObavestenje from "./adaptiveCards/student_obavestenje.json";
 import rawStudentTabela from "./adaptiveCards/student_tabela.json";
+import rawObavestiPoslednjeg from "./adaptiveCards/profesir_obavesti_poslednjeg.json"
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import { TabelaKorisnika } from "./AdaptiveCardsInterfaces/TabelaKorisnika";
 import { ObavestenjeStudenta } from "./AdaptiveCardsInterfaces/ObavestenjeStudenta";
@@ -194,6 +195,32 @@ export class TeamsBot extends TeamsActivityHandler {
         await context.sendActivity("Neuspesno!");
       return { statusCode: 200, type: undefined, value: undefined };
     }
+    if(invokeValue.action.verb === "kariticaObavestiPoslednjeg"){
+
+      const card = AdaptiveCards.declare(rawObavestiPoslednjeg).render();
+      await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
+    if(invokeValue.action.verb === "obavesti_poslednjeg"){
+      let brIndeksa : string = (invokeValue.action.data.br_indeksa == undefined ? "0" : invokeValue.action.data.br_indeksa).toString();
+      let message : string = (invokeValue.action.data.message == undefined ? "no message" : invokeValue.action.data.message).toString();
+      let kon = await this.adaptiveFunctions.obavestiPoslednjeg(brIndeksa);
+      const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
+      context.adapter.continueConversation(kon.conv, async(contextn : TurnContext)=>{
+        await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+      });
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
+    if(invokeValue.action.verb === "obavestiSledeceg"){
+      let message = "Sledeći ste na redu!";
+      let kon = await this.adaptiveFunctions.obavestiSledeceg();
+      const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
+      context.adapter.continueConversation(kon.conv, async(contextn : TurnContext)=>{
+        await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+      });
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
+
 
   }
 

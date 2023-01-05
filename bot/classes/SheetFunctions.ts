@@ -257,4 +257,36 @@ export class SheetFunctions{
         return true;
     }
 
+    public async obavestiPoslednjeg(brIndeksa){
+        let title = await this.vratiTitlePoslednjegOdgovaranja();
+        let data = await this.getDataFromSpreadsheet(title + "!A2:E");
+        let context;
+        let ind;
+        for(let i=0; i<data.data.values.length; i++){
+            if(data.data.values[i][1] == brIndeksa){
+                ind = i;
+                data.data.values[i][2] = "TRUE";
+                context = data.data.values[i][3];
+                break;
+            }
+        }
+        let value = data.data.values[ind];
+        ind += 2;
+        await this.updateDataSpreadSheet(title + "!A" + ind + ":E"+ind, value);
+        return context;
+    }
+
+    public async obavestiSledeceg(){
+        let title = await this.vratiTitlePoslednjegOdgovaranja();
+        let data = await this.getDataFromSpreadsheet(title + "!A2:E");
+        let context;
+        for(let i=0; i<data.data.values.length; i++){
+            if(data.data.values[i][2] == "FALSE"){
+                context = data.data.values[i][3];
+                break;
+            }
+        }
+        return context;
+    }
+
 }

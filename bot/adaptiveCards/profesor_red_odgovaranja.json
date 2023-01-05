@@ -288,8 +288,9 @@
             "type": "ActionSet",
             "actions": [
                 {
-                    "type": "Action.Submit",
-                    "title": "Obavesti poslednjeg"
+                    "type": "Action.Execute",
+                    "title": "Obavesti poslednjeg",
+                    "verb": "kariticaObavestiPoslednjeg"
                 }
             ],
             "id": "5"

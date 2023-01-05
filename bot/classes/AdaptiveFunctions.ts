@@ -60,5 +60,16 @@ export class AdaptiveFunctions{
     public async zavrsiOdgovaranje(userID : String) : Promise<boolean>{
         return await this.sf.zavrsiOdgovaranje(userID);
     }
+    public async obavestiPoslednjeg(brIndeksa){
+        let context = await this.sf.obavestiPoslednjeg(brIndeksa);
+        let kontekst : ConvActiv = JSON.parse(context)
+        return kontekst;
+    }
+
+    public async obavestiSledeceg(){
+        let context = await this.sf.obavestiSledeceg();
+        let kontekst : ConvActiv = JSON.parse(context)
+        return kontekst;
+    }
 
 }
