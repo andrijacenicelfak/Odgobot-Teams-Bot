@@ -278,16 +278,6 @@
             "type": "ActionSet",
             "actions": [
                 {
-                    "type": "Action.Submit",
-                    "title": "Ukloni sledećeg iz reda"
-                }
-            ],
-            "id": "4"
-        },
-        {
-            "type": "ActionSet",
-            "actions": [
-                {
                     "type": "Action.Execute",
                     "title": "Obavesti poslednjeg",
                     "verb": "kariticaObavestiPoslednjeg"

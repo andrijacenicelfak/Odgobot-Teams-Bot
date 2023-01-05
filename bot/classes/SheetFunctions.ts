@@ -108,6 +108,18 @@ export class SheetFunctions{
         });
     }
 
+    private async getSheetId(title){
+        const request = {
+            spreadsheetId: this.id_odgovaranja,
+            ranges: [title],  
+            includeGridData: false,  
+        
+            auth: this.auth,
+          };
+        const response = (await this.gsheet.spreadsheets.get(request)).data; 
+        return  response.sheets[0].properties.sheetId;
+    }
+
     public async togglePoslednjeOdgovaranje(){    
         const data = await this.getDataFromSpreadsheet("odg");
 
@@ -314,16 +326,7 @@ export class SheetFunctions{
             }
         }
         if (uspesno){
-
-            const request = {
-                spreadsheetId: this.id_odgovaranja,
-                ranges: [title],  
-                includeGridData: false,  
-            
-                auth: this.auth,
-              };
-            const response = (await this.gsheet.spreadsheets.get(request)).data;  
-            let id =  response.sheets[0].properties.sheetId;
+            let id = await this.getSheetId(title);
             const request2 = {
                 "spreadsheetId": this.id_odgovaranja,
                 "requestBody": {
@@ -332,8 +335,8 @@ export class SheetFunctions{
                             "range": {
                               "sheetId": id,
                               "dimension": "ROWS",
-                              "startIndex": index + 2,
-                              "endIndex": index + 3
+                              "startIndex": index + 1,
+                              "endIndex": index + 2
                             }
                         }
                     }]
