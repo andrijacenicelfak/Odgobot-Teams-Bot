@@ -215,14 +215,10 @@
                     "width": "stretch",
                     "items": [
                         {
-                            "type": "ActionSet",
-                            "actions": [
-                                {
-                                    "type": "Action.Execute",
-                                    "title": "Moje vreme",
-                                    "verb": "mojeVreme"
-                                }
-                            ]
+                            "type": "TextBlock",
+                            "text": "Odgovaras za :",
+                            "wrap": true,
+                            "horizontalAlignment": "Center"
                         }
                     ]
                 },
@@ -231,9 +227,10 @@
                     "width": "stretch",
                     "items": [
                         {
-                            "type": "Input.Number",
-                            "placeholder": "Broj indeksa",
-                            "id": "brojIndeksaStudentTabela"
+                            "type": "TextBlock",
+                            "text": "${studentVreme}",
+                            "wrap": true,
+                            "horizontalAlignment": "Center"
                         }
                     ]
                 }

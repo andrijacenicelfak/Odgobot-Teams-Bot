@@ -1,3 +1,4 @@
 export class StudentTabela{
-    data : string[]
+    data : string[];
+    studentVreme : number;
 }

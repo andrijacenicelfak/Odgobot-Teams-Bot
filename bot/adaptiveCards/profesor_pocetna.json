@@ -9,25 +9,66 @@
             "wrap": true
         },
         {
-            "type": "ActionSet",
-            "actions": [
+            "type": "ColumnSet",
+            "columns": [
                 {
-                    "type": "Action.Execute",
-                    "title": "Kreiraj odgovaranje",
-                    "verb" : "kreairajOdogovaranje"
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.Execute",
+                                    "title": "Kreiraj odgovaranje",
+                                    "verb": "kreairajOdogovaranje"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.Execute",
+                                    "title": "Kreiraj odgovaranje za timove",
+                                    "isEnabled": false
+                                }
+                            ]
+                        }
+                    ]
                 }
-            ],
-            "id": "1"
+            ]
         },
         {
-            "type": "ActionSet",
-            "actions": [
+            "type": "ColumnSet",
+            "columns": [
                 {
-                    "type": "Action.Execute",
-                    "title": "Kreiraj odgovaranje za timove"
+                    "type": "Column",
+                    "width": "stretch"
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.Execute",
+                                    "title": "Nastavi poslednje",
+                                    "verb" : "nastaviPoslednjeOdgovaranje"
+                                }
+                            ]
+                        }
+                    ]
                 }
-            ],
-            "id": "2"
+            ]
         }
     ]
 }

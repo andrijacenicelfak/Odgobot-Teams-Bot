@@ -1,6 +1,7 @@
 import {google, sheets_v4} from 'googleapis';
 import * as fs from 'fs';
-
+import { StudentTabela } from '../AdaptiveCardsInterfaces/StudentTabela';
+import {TabelaKorisnika} from '../AdaptiveCardsInterfaces/TabelaKorisnika';
 export class SheetFunctions{
 
     public id_odgovaranja:string;
@@ -198,7 +199,7 @@ export class SheetFunctions{
         let vrednosti = [];
 
         data2.data.values.forEach((value,index) => {
-            if(index >= data2.data.values.length -5)
+            if(value[2] === "FALSE")
                 vrednosti.push(value);
         });
 
@@ -216,7 +217,7 @@ export class SheetFunctions{
         return data.data.values;
     }
 
-    public async vratiPoslednjStudenteZaTrenutnoOdgovaranje() : Promise<string[][]>{
+    public async vratiPoslednjStudenteZaTrenutnoOdgovaranje(userID : string) : Promise<{data : string[][], userTime : number}>{
         let title = await this.vratiTitlePoslednjegOdgovaranja();
 
         const data = await this.getDataFromSpreadsheet(title+"!A2:E");
@@ -228,33 +229,38 @@ export class SheetFunctions{
             });
             while(values.length < 3)
                 values.push(["", "", ""]);
-            return values;
+            return {data : values, userTime : 0};
         }
         let dates : Date[] = [];
-        let odgovarali = [];
         let sum = 0;
         data.data.values.forEach(e=>{
             if(e[2] === "TRUE"){
                 let  ndate = new Date();
                 ndate.setTime(Number.parseInt(e[4]));
-                dates.push(ndate);
-                odgovarali.push(e);
-                if(dates.length > 0){
-                    sum = ndate.getTime() - dates[dates.length-1].getTime();
+                if(dates.length > 1){
+                    sum += ndate.getTime() - dates[dates.length-1].getTime();
                 }
+                dates.push(ndate);
             }
         })
-        // TODO :: Ne racuna se lepo vreme
+        let userTime = 0;
         let average = sum / (dates.length-1); // milisekunde
         let last : number = 0;
         let values = [];
         for(let i = 0; i < data.data.values.length; i++){
+            if(data.data.values[i][2] === "TRUE"){
+                last = Number.parseInt(data.data.values[i][4]);
+            }
             if(data.data.values[i][2] === "FALSE"){
                 last += average;
-                values.push([data.data.values[i][0], data.data.values[i][1], "" + (last / (60 * 1000))]); // vraca u broj minuta
+                let time = Math.ceil((last - Date.now()) / (60 * 1000));
+                if(JSON.parse(data.data.values[i][3]).conv.user.id === userID && userTime === 0){
+                    userTime =time;
+                }
+                values.push([data.data.values[i][0], data.data.values[i][1], "" + time + " min"]); // vraca u broj minuta
             }
         }
-        return values;
+        return {data  : values, userTime};
     }
 
     public async zavrsiOdgovaranje(userID: String)  : Promise<boolean>{

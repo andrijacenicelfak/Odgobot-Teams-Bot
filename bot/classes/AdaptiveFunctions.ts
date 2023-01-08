@@ -43,16 +43,17 @@ export class AdaptiveFunctions{
         return nizContext;
     }
 
-    public async vratiTriSledecaZaOdgovaranje() {
-        let dataRows = await this.sf.vratiPoslednjStudenteZaTrenutnoOdgovaranje();
+    public async vratiTriSledecaZaOdgovaranje(ca : ConvActiv) {
+        let dataRows = await this.sf.vratiPoslednjStudenteZaTrenutnoOdgovaranje(ca.conv.user.id);
         let data : string[] = [];
-        dataRows.forEach(e=>{
+        dataRows.data.forEach(e=>{
             data.push(e[0]);
             data.push(e[1]);
             data.push(e[2]);
         })
         let stab : StudentTabela = {
-            data : data
+            data : data,
+            studentVreme : dataRows.userTime
         }
         return stab;
     }
@@ -76,5 +77,4 @@ export class AdaptiveFunctions{
         let rez = await this.sf.odjavaStudenta(userID);
         return rez;
     }
-
 }

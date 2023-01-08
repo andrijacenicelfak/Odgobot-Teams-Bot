@@ -112,6 +112,33 @@ export class TeamsBot extends TeamsActivityHandler {
         return { statusCode: 200, type: undefined, value: undefined };
     }
 
+    if(invokeValue.action.verb === "nastaviPoslednjeOdgovaranje"){
+        let odg : TabelaKorisnika;
+
+        odg = await this.adaptiveFunctions.karticaRedOdgovaranjaProfesor();
+
+        const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorRed).render(odg);
+        await context.sendActivity({
+          type: "message",
+          id: context.activity.replyToId,
+          attachments: [CardFactory.adaptiveCard(card)],
+        });
+        return { statusCode: 200, type: undefined, value: undefined };
+    }
+    if(invokeValue.action.verb === "osveziTabeluProfesora"){
+        let odg : TabelaKorisnika;
+
+        odg = await this.adaptiveFunctions.karticaRedOdgovaranjaProfesor();
+
+        const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorRed).render(odg);
+        await context.updateActivity({
+          type: "message",
+          id: context.activity.replyToId,
+          attachments: [CardFactory.adaptiveCard(card)],
+        });
+        return { statusCode: 200, type: undefined, value: undefined };
+    }
+
     if(invokeValue.action.verb === "omoguci"){
       let omoguci = await this.adaptiveFunctions.toggleOmoguceno();
 
@@ -136,7 +163,7 @@ export class TeamsBot extends TeamsActivityHandler {
       let uspesno = await this.adaptiveFunctions.prijaviSeNaOdgovaranje(ca, user, brIndeksa);
 
       //await context.sendActivity("Uspesno prijavljen na odgovaranje!"); // TODO kartica sa tabelom
-      let data = await this.adaptiveFunctions.vratiTriSledecaZaOdgovaranje();
+      let data = await this.adaptiveFunctions.vratiTriSledecaZaOdgovaranje(ca);
       const card = AdaptiveCards.declare<StudentTabela>(rawStudentTabela).render(data);
       await context.sendActivity({
         type: "message",
@@ -147,7 +174,10 @@ export class TeamsBot extends TeamsActivityHandler {
     }
 
     if(invokeValue.action.verb == "prikaziTabeluStudent"){
-      let data = await this.adaptiveFunctions.vratiTriSledecaZaOdgovaranje();
+      const convref = TurnContext.getConversationReference(context.activity);
+      let ca : ConvActiv= {conv : convref, act : context.activity};
+
+      let data = await this.adaptiveFunctions.vratiTriSledecaZaOdgovaranje(ca);
       const card = AdaptiveCards.declare<StudentTabela>(rawStudentTabela).render(data);
       await context.sendActivity({
         type: "message",
@@ -158,7 +188,9 @@ export class TeamsBot extends TeamsActivityHandler {
     }
 
      if(invokeValue.action.verb == "osveziTabeluStudenata"){
-      let data = await this.adaptiveFunctions.vratiTriSledecaZaOdgovaranje();
+      const convref = TurnContext.getConversationReference(context.activity);
+      let ca : ConvActiv= {conv : convref, act : context.activity};
+      let data = await this.adaptiveFunctions.vratiTriSledecaZaOdgovaranje(ca);
       const card = AdaptiveCards.declare<StudentTabela>(rawStudentTabela).render(data);
       await context.updateActivity({
         type: "message",
@@ -195,16 +227,16 @@ export class TeamsBot extends TeamsActivityHandler {
         await context.sendActivity("Neuspesno!");
       return { statusCode: 200, type: undefined, value: undefined };
     }
-    if(invokeValue.action.verb === "kariticaObavestiPoslednjeg"){
+    if(invokeValue.action.verb === "kariticaObavestiPoslednjeg"){ // WTF
 
       const card = AdaptiveCards.declare(rawObavestiPoslednjeg).render();
       await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
       return { statusCode: 200, type: undefined, value: undefined };
     }
-    if(invokeValue.action.verb === "obavesti_poslednjeg"){
+    if(invokeValue.action.verb === "obavesti_poslednjeg"){ // WTF????
       let brIndeksa : string = (invokeValue.action.data.br_indeksa == undefined ? "0" : invokeValue.action.data.br_indeksa).toString();
       let message : string = (invokeValue.action.data.message == undefined ? "no message" : invokeValue.action.data.message).toString();
-      let kon = await this.adaptiveFunctions.obavestiPoslednjeg(brIndeksa);
+      let kon = await this.adaptiveFunctions.obavestiPoslednjeg(brIndeksa); // Ne treba broj indeksa??? Zasto bi profesor morao da zna broj indeksa
       const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
       context.adapter.continueConversation(kon.conv, async(contextn : TurnContext)=>{
         await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
