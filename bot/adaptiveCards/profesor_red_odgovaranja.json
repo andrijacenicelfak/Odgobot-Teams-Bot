@@ -33,6 +33,22 @@
                         }
                     ],
                     "verticalContentAlignment": "Center"
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.Execute",
+                                    "title": "↺",
+                                    "verb": "osveziTabeluProfesora"
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         },
@@ -69,7 +85,6 @@
                                 {
                                     "type": "TextBlock",
                                     "text": "Broj indeksa",
-
                                     "wrap": true
                                 }
                             ]
