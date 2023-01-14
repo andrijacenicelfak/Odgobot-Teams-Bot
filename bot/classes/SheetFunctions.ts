@@ -348,10 +348,44 @@ export class SheetFunctions{
                     }]
                 }
             };
-            console.log(id);
             await this.deleteRow(request2);
         }
         return uspesno;
     }
+    public async InitializeSheet(idOdg : string) {
+        if(this.auth === undefined)
+            await this.createCredentials();
+        let title = "odg"
+        this.id_odgovaranja = idOdg;
+        const request = {
+            "spreadsheetId": this.id_odgovaranja,
+            "resource": {
+                "requests": [{
+                "addSheet": {
+                        "properties": {
+                            "title": title
+                        }
+                    }
+                }]
+            }
+        };
 
+        await this.gsheet.spreadsheets.batchUpdate(request, async (err, response) => {
+            await this.gsheet.spreadsheets.values.update({
+                spreadsheetId : this.id_odgovaranja,
+                range : "odg",
+                includeValuesInResponse : false,
+                valueInputOption : "USER_ENTERED",
+                requestBody : {
+                    majorDimension : "ROWS",
+                    values : [[
+                        "Title",
+                        "Omoguceno",
+                        "=INDEX(A:A, MAX(COUNTA(A:A)), 1)",
+                        "=INDEX(B:B, MAX(COUNTA(B:B)), 1)"
+                    ]],
+                }
+            });  
+        });
+    }
 }

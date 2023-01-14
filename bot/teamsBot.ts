@@ -19,17 +19,27 @@ import rawProfesorRed from "./adaptiveCards/profesor_red_odgovaranja.json";
 import rawProfesorObavestiSve from "./adaptiveCards/profesor_obavesti_sve.json";
 import rawStudentObavestenje from "./adaptiveCards/student_obavestenje.json";
 import rawStudentTabela from "./adaptiveCards/student_tabela.json";
-import rawObavestiPoslednjeg from "./adaptiveCards/profesir_obavesti_poslednjeg.json"
+import rawObavestiPoslednjeg from "./adaptiveCards/profesor_obavesti_poslednjeg.json"
+import rawProfesorLogin from "./adaptiveCards/profesor_login.json";
+import rawProfesorChangePassword from "./AdaptiveCards/profesor_change_password.json";
+import rawProfesorChangeTableID from "./adaptiveCards/profesor_postavi_novi_ID.json";
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import { TabelaKorisnika } from "./AdaptiveCardsInterfaces/TabelaKorisnika";
 import { ObavestenjeStudenta } from "./AdaptiveCardsInterfaces/ObavestenjeStudenta";
 import { ConvActiv } from "./ConvActiv";
 import { StudentTabela } from "./AdaptiveCardsInterfaces/StudentTabela";
+
+
+import * as fs from 'fs';
+
 export class TeamsBot extends TeamsActivityHandler {
   private adaptiveFunctions : AdaptiveFunctions;
+  private profesorPassword : string;
   constructor() {
     super();
-    
+
+    this.profesorPassword = JSON.parse(fs.readFileSync("./profesor_login.json", 'utf-8')).password;
+  
     this.adaptiveFunctions = new AdaptiveFunctions();
     this.onMessage(async (context, next) => {
       console.log("Running with Message Activity.");
@@ -43,7 +53,7 @@ export class TeamsBot extends TeamsActivityHandler {
 
       switch (txt) {
         case "profesor":{
-          const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorPocetna).render();
+          const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorLogin).render();
           await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
           break;
         }
@@ -53,7 +63,7 @@ export class TeamsBot extends TeamsActivityHandler {
           break;
         }
         default:{
-          await context.sendActivity("I don't realy understand you!");
+          await context.sendActivity("Ne razumem te!");
           break;
         }
       }
@@ -152,7 +162,47 @@ export class TeamsBot extends TeamsActivityHandler {
       });
       return { statusCode: 200, type: undefined, value: undefined };
     }
+    if( invokeValue.action.verb ==="zamenaIDTabele"){
+        const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorChangeTableID).render();
+        await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
 
+    if( invokeValue.action.verb ==="postaviNoviIDTabele"){
+        let idOdg : string = (invokeValue.action.data.noviID == undefined ? "0" : invokeValue.action.data.noviID).toString();
+        await this.adaptiveFunctions.KreirajNovuTabelu(idOdg);
+        const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorPocetna).render();
+        await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+        fs.writeFileSync("./id_odgovaranja.json", JSON.stringify({id : idOdg}));
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
+
+    if( invokeValue.action.verb ==="promeniSifru"){
+        const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorChangePassword).render();
+        await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
+    if( invokeValue.action.verb ==="changePassword"){
+        let pass : string = (invokeValue.action.data.password == undefined ? "0" : invokeValue.action.data.password).toString();
+        //this.profesorPassword = JSON.parse(fs.readFileSync("./profesor_login.json", 'utf-8')).password;
+        this.profesorPassword = pass;
+        const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorPocetna).render();
+        await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+        fs.writeFileSync("./profesor_login.json", JSON.stringify({password : pass}));
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
+    if( invokeValue.action.verb ==="loginProfesor"){
+      let pass : string = (invokeValue.action.data.password == undefined ? "0" : invokeValue.action.data.password).toString();
+      if (pass === this.profesorPassword){
+        const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorPocetna).render();
+        await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+      }else{
+        await context.sendActivity("Pogresna sifra! Pokusaj ponovo!");
+        const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorLogin).render();
+        await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+      }
+      return { statusCode: 200, type: undefined, value: undefined };
+    }
     if( invokeValue.action.verb ==="prijaviStudent"){
       let brIndeksa : string = (invokeValue.action.data.brojIndeksa == undefined ? "0" : invokeValue.action.data.brojIndeksa).toString();
       let user = context.activity.from.name;
@@ -227,16 +277,16 @@ export class TeamsBot extends TeamsActivityHandler {
         await context.sendActivity("Neuspesno!");
       return { statusCode: 200, type: undefined, value: undefined };
     }
-    if(invokeValue.action.verb === "kariticaObavestiPoslednjeg"){ // WTF
+    if(invokeValue.action.verb === "kariticaObavestiPoslednjeg"){
 
       const card = AdaptiveCards.declare(rawObavestiPoslednjeg).render();
       await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
       return { statusCode: 200, type: undefined, value: undefined };
     }
-    if(invokeValue.action.verb === "obavesti_poslednjeg"){ // WTF????
+    if(invokeValue.action.verb === "obavesti_poslednjeg"){ 
       let brIndeksa : string = (invokeValue.action.data.br_indeksa == undefined ? "0" : invokeValue.action.data.br_indeksa).toString();
       let message : string = (invokeValue.action.data.message == undefined ? "no message" : invokeValue.action.data.message).toString();
-      let kon = await this.adaptiveFunctions.obavestiPoslednjeg(brIndeksa); // Ne treba broj indeksa??? Zasto bi profesor morao da zna broj indeksa
+      let kon = await this.adaptiveFunctions.obavestiPoslednjeg(brIndeksa); 
       const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
       context.adapter.continueConversation(kon.conv, async(contextn : TurnContext)=>{
         await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
@@ -263,7 +313,8 @@ export class TeamsBot extends TeamsActivityHandler {
       }
       return { statusCode: 200, type: undefined, value: undefined };
     }
-
+      await context.sendActivity("Ne postoji komanda!");
+      return { statusCode: 404, type: undefined, value: undefined };
 
   }
 

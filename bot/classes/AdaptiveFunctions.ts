@@ -5,6 +5,7 @@ import { TabelaKorisnika } from "../AdaptiveCardsInterfaces/TabelaKorisnika";
 import { StudentTabela } from "../AdaptiveCardsInterfaces/StudentTabela";
 
 export class AdaptiveFunctions{
+
     public  sf: SheetFunctions;
 
     constructor(){
@@ -76,5 +77,8 @@ export class AdaptiveFunctions{
     public async odjavaStudenta(userID : String): Promise<boolean>{
         let rez = await this.sf.odjavaStudenta(userID);
         return rez;
+    }
+    public async KreirajNovuTabelu(idOdg : string) {
+        this.sf.InitializeSheet(idOdg);
     }
 }

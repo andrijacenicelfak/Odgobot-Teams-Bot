@@ -13,7 +13,7 @@
             "columns": [
                 {
                     "type": "Column",
-                    "width": "stretch",
+                    "width": 50,
                     "items": [
                         {
                             "type": "ActionSet",
@@ -25,23 +25,25 @@
                                 }
                             ]
                         }
-                    ]
+                    ],
+                    "horizontalAlignment": "Center"
                 },
                 {
                     "type": "Column",
-                    "width": "stretch",
+                    "width": 50,
                     "items": [
                         {
                             "type": "ActionSet",
                             "actions": [
                                 {
                                     "type": "Action.Execute",
-                                    "title": "Kreiraj odgovaranje za timove",
-                                    "isEnabled": false
+                                    "title": "Promeni sifru",
+                                    "verb": "promeniSifru"
                                 }
                             ]
                         }
-                    ]
+                    ],
+                    "horizontalAlignment": "Right"
                 }
             ]
         },
@@ -50,19 +52,42 @@
             "columns": [
                 {
                     "type": "Column",
-                    "width": "stretch"
-                },
-                {
-                    "type": "Column",
                     "width": "stretch",
                     "items": [
                         {
-                            "type": "ActionSet",
-                            "actions": [
+                            "type": "ColumnSet",
+                            "columns": [
                                 {
-                                    "type": "Action.Execute",
-                                    "title": "Nastavi poslednje",
-                                    "verb" : "nastaviPoslednjeOdgovaranje"
+                                    "type": "Column",
+                                    "width": 50,
+                                    "items": [
+                                        {
+                                            "type": "ActionSet",
+                                            "actions": [
+                                                {
+                                                    "type": "Action.Execute",
+                                                    "title": "Nastavi poslednje odgovaranje",
+                                                    "verb": "nastaviPoslednjeOdgovaranje"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "Column",
+                                    "width": 50,
+                                    "items": [
+                                        {
+                                            "type": "ActionSet",
+                                            "actions": [
+                                                {
+                                                    "type": "Action.Execute",
+                                                    "title": "Zameni ID tabele",
+                                                    "verb": "zamenaIDTabele"
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
                             ]
                         }
