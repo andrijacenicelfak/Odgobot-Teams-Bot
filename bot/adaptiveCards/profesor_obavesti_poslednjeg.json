@@ -4,11 +4,6 @@
     "version": "1.5",
     "body": [
         {
-            "type": "Input.Number",
-            "placeholder": "Broj indeksa",
-            "id": "br_indeksa"
-        },
-        {
             "type": "Input.Text",
             "placeholder": "Message",
             "isMultiline": true,

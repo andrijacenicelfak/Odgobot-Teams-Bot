@@ -286,15 +286,14 @@ export class SheetFunctions{
         return true;
     }
 
-    public async obavestiPoslednjeg(brIndeksa){
+    public async obavestiPoslednjeg(){
         let title = await this.vratiTitlePoslednjegOdgovaranja();
         let data = await this.getDataFromSpreadsheet(title + "!A2:E");
         let context;
         let ind;
-        for(let i=0; i<data.data.values.length; i++){
-            if(data.data.values[i][1] == brIndeksa){
+        for(let i=data.data.values.length-1; i >= 0; i--){
+            if(data.data.values[i][2] == 'TRUE'){
                 ind = i;
-                data.data.values[i][2] = "TRUE";
                 context = data.data.values[i][3];
                 break;
             }
