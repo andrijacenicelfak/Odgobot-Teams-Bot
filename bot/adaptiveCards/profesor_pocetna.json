@@ -5,7 +5,7 @@
     "body": [
         {
             "type": "TextBlock",
-            "text": "Zdravo, ja sam TZPU bot. Kako mogu da pomognem?",
+            "text": "Zdravo, ja sam Odgobot. Kako mogu da pomognem?",
             "wrap": true
         },
         {
