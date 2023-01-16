@@ -1,5 +1,5 @@
 {
-    "appName": "TZPUBot",
+    "appName": "Odgobot",
     "projectId": "8d645f10-ffaf-4ffe-a577-6a930a835e45",
     "version": "2.1.0",
     "components": [
@@ -12,7 +12,8 @@
                 "bot"
             ],
             "build": true,
-            "folder": "bot"
+            "folder": "bot",
+            "artifactFolder": "bot"
         },
         {
             "name": "bot-service",

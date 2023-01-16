@@ -5,10 +5,10 @@
     "id": "{{state.fx-resource-appstudio.teamsAppId}}",
     "packageName": "com.microsoft.teams.extension",
     "developer": {
-        "name": "Teams App, Inc.",
-        "websiteUrl": "https://www.example.com",
-        "privacyUrl": "https://www.example.com/termofuse",
-        "termsOfUseUrl": "https://www.example.com/privacy"
+        "name": "Elfak team, Odgobot",
+        "websiteUrl": "https://www.elfak.rs",
+        "privacyUrl": "https://www.elfak.rs",
+        "termsOfUseUrl": "https://www.elfak.rs"
     },
     "icons": {
         "color": "{{config.manifest.icons.color}}",

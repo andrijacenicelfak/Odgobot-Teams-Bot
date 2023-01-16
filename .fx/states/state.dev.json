@@ -1,0 +1,32 @@
+{
+    "solution": {
+        "provisionSucceeded": true,
+        "teamsAppTenantId": "8f2732bf-62ca-4159-bc51-4a8f1060df65",
+        "subscriptionId": "62c215aa-252d-4315-aed4-7d0204710ed6",
+        "subscriptionName": "Azure subscription 1",
+        "tenantId": "84fd5b2a-33ae-4b01-975f-6136568e285d",
+        "needCreateResourceGroup": true,
+        "resourceGroupName": "Odgobot-dev-rg",
+        "location": "West Europe",
+        "resourceNameSuffix": "e35b7a"
+    },
+    "fx-resource-appstudio": {
+        "tenantId": "8f2732bf-62ca-4159-bc51-4a8f1060df65",
+        "teamsAppId": "00c23af5-a18f-48a2-8dc2-5bfae130cd6c"
+    },
+    "fx-resource-bot": {
+        "botId": "ec647733-c667-4fd7-b141-ee0588fc5114",
+        "botPassword": "{{fx-resource-bot.botPassword}}",
+        "skuName": "B1",
+        "siteName": "tzpubot22b29cbot",
+        "domain": "tzpubot22b29cbot.azurewebsites.net",
+        "appServicePlanName": "tzpubot22b29cbot",
+        "resourceId": "/subscriptions/62c215aa-252d-4315-aed4-7d0204710ed6/resourceGroups/Odgobot-dev-rg/providers/Microsoft.Web/sites/tzpubot22b29cbot",
+        "siteEndpoint": "https://tzpubot22b29cbot.azurewebsites.net"
+    },
+    "fx-resource-identity": {
+        "identityName": "tzpubot22b29c",
+        "identityResourceId": "/subscriptions/62c215aa-252d-4315-aed4-7d0204710ed6/resourceGroups/Odgobot-dev-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/tzpubot22b29c",
+        "identityClientId": "eb5825af-0011-423e-9321-79778e13e173"
+    }
+}
