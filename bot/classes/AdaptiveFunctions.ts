@@ -62,8 +62,8 @@ export class AdaptiveFunctions{
     public async zavrsiOdgovaranje(userID : String) : Promise<boolean>{
         return await this.sf.zavrsiOdgovaranje(userID);
     }
-    public async obavestiPoslednjeg(brIndeksa){
-        let context = await this.sf.obavestiPoslednjeg(brIndeksa);
+    public async obavestiPoslednjeg(){
+        let context = await this.sf.obavestiPoslednjeg();
         let kontekst : ConvActiv = JSON.parse(context)
         return kontekst;
     }

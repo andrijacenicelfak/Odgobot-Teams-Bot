@@ -284,9 +284,8 @@ export class TeamsBot extends TeamsActivityHandler {
       return { statusCode: 200, type: undefined, value: undefined };
     }
     if(invokeValue.action.verb === "obavesti_poslednjeg"){ 
-      let brIndeksa : string = (invokeValue.action.data.br_indeksa == undefined ? "0" : invokeValue.action.data.br_indeksa).toString();
       let message : string = (invokeValue.action.data.message == undefined ? "no message" : invokeValue.action.data.message).toString();
-      let kon = await this.adaptiveFunctions.obavestiPoslednjeg(brIndeksa); 
+      let kon = await this.adaptiveFunctions.obavestiPoslednjeg(); 
       const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
       context.adapter.continueConversation(kon.conv, async(contextn : TurnContext)=>{
         await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
