@@ -5,7 +5,7 @@
     "id": "{{state.fx-resource-appstudio.teamsAppId}}",
     "packageName": "com.microsoft.teams.extension",
     "developer": {
-        "name": "Elfak team, Odgobot",
+        "name": "TS-2",
         "websiteUrl": "https://www.elfak.rs",
         "privacyUrl": "https://www.elfak.rs",
         "termsOfUseUrl": "https://www.elfak.rs"

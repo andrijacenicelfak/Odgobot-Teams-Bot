@@ -11,7 +11,7 @@ export class SheetFunctions{
 
     constructor(){
         
-        this.id_odgovaranja = JSON.parse(fs.readFileSync("./id_odgovaranja.json", 'utf-8')).id;
+        this.id_odgovaranja = JSON.parse(fs.readFileSync("C:/home/site/wwwroot/id_odgovaranja.json", 'utf-8')).id;
         this.auth = undefined;
         this.client = undefined;
         this.gsheet = undefined;
@@ -20,7 +20,7 @@ export class SheetFunctions{
 
     private async createCredentials(){
         this.auth = new google.auth.GoogleAuth({
-            keyFile: "credentials.json",
+            keyFile: "../credentials.json",
             scopes : "https://www.googleapis.com/auth/spreadsheets",
         });
         this.client = await this.auth.getClient();
@@ -260,9 +260,13 @@ export class SheetFunctions{
                 if(JSON.parse(data.data.values[i][3]).conv.user.id === userID && userTime === 0){
                     userTime =time;
                 }
-                values.push([data.data.values[i][0], data.data.values[i][1], "" + time + " min"]); // vraca u broj minuta
+                values.push([data.data.values[i][0], data.data.values[i][1], dates.length > 2 ? ("" + time + " min") : "?"]); // vraca u broj minuta
             }
         }
+        while(values.length < 7)
+            values.push(["","",""]);
+        if(dates.length < 2)
+            userTime = 0;
         return {data  : values, userTime};
     }
 

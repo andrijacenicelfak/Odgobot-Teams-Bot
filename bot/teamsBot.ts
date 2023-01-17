@@ -38,7 +38,7 @@ export class TeamsBot extends TeamsActivityHandler {
   constructor() {
     super();
 
-    this.profesorPassword = JSON.parse(fs.readFileSync("./profesor_login.json", 'utf-8')).password;
+    this.profesorPassword = JSON.parse(fs.readFileSync("C:/home/site/wwwroot/profesor_login.json", 'utf-8')).password;
   
     this.adaptiveFunctions = new AdaptiveFunctions();
     this.onMessage(async (context, next) => {
@@ -211,8 +211,10 @@ export class TeamsBot extends TeamsActivityHandler {
       let ca : ConvActiv= {conv : convref, act : context.activity};
 
       let uspesno = await this.adaptiveFunctions.prijaviSeNaOdgovaranje(ca, user, brIndeksa);
-
-      //await context.sendActivity("Uspesno prijavljen na odgovaranje!"); // TODO kartica sa tabelom
+      if(!uspesno){
+        await context.sendActivity("Na žalost nije se moguće prijaviti!");
+              return { statusCode: 200, type: undefined, value: undefined };
+      }
       let data = await this.adaptiveFunctions.vratiTriSledecaZaOdgovaranje(ca);
       const card = AdaptiveCards.declare<StudentTabela>(rawStudentTabela).render(data);
       await context.sendActivity({
