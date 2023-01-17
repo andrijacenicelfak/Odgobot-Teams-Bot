@@ -286,10 +286,16 @@ export class TeamsBot extends TeamsActivityHandler {
     if(invokeValue.action.verb === "obavesti_poslednjeg"){ 
       let message : string = (invokeValue.action.data.message == undefined ? "no message" : invokeValue.action.data.message).toString();
       let kon = await this.adaptiveFunctions.obavestiPoslednjeg(); 
-      const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
-      context.adapter.continueConversation(kon.conv, async(contextn : TurnContext)=>{
-        await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
-      });
+      if(kon != undefined){
+        const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
+        context.adapter.continueConversation(kon.conv, async(contextn : TurnContext)=>{
+          await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+        });
+      }
+      else{
+        await context.sendActivity("Nijedan student nije promenio svoj status odgovaranja!");
+      }
+
       return { statusCode: 200, type: undefined, value: undefined };
     }
     if(invokeValue.action.verb === "obavestiSledeceg"){
