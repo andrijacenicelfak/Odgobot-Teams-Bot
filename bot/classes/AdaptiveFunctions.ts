@@ -64,8 +64,12 @@ export class AdaptiveFunctions{
     }
     public async obavestiPoslednjeg(){
         let context = await this.sf.obavestiPoslednjeg();
-        let kontekst : ConvActiv = JSON.parse(context)
-        return kontekst;
+        if(context != undefined){
+            let kontekst : ConvActiv = JSON.parse(context)
+            return kontekst;
+        }
+        return context;
+
     }
 
     public async obavestiSledeceg(){

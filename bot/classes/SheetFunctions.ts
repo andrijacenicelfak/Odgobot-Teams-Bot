@@ -292,7 +292,7 @@ export class SheetFunctions{
     public async obavestiPoslednjeg(){
         let title = await this.vratiTitlePoslednjegOdgovaranja();
         let data = await this.getDataFromSpreadsheet(title + "!A2:E");
-        let context;
+        let context = undefined;
         let ind;
         for(let i=data.data.values.length-1; i >= 0; i--){
             if(data.data.values[i][2] == 'TRUE'){
@@ -301,9 +301,11 @@ export class SheetFunctions{
                 break;
             }
         }
-        let value = data.data.values[ind];
-        ind += 2;
-        await this.updateDataSpreadSheet(title + "!A" + ind + ":E"+ind, value);
+        if(context != undefined){
+            let value = data.data.values[ind];
+            ind += 2;
+            await this.updateDataSpreadSheet(title + "!A" + ind + ":E"+ind, value);
+        }
         return context;
     }
 
