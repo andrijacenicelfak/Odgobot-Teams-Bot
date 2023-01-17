@@ -162,8 +162,11 @@ export class SheetFunctions{
 
     public async prijavljivanjeNaPoslednjeOdgovaranje(ca:string, user:string, index:number) : Promise<boolean>{
 
-        let title = await this.vratiTitlePoslednjegOdgovaranja();
-
+        let data = await this.getDataFromSpreadsheet("odg!C1:D1");
+        if(data.data.values[0][1] === "FALSE")
+            return false;
+        
+        let title = data.data.values[0][0];
         await this.gsheet.spreadsheets.values.append({
             spreadsheetId : this.id_odgovaranja,
             range : title,
