@@ -200,11 +200,14 @@ export class SheetFunctions{
         const data2 = await this.getDataFromSpreadsheet(title+"!A2:C");
 
         let vrednosti = [];
-
-        data2.data.values.forEach((value,index) => {
-            if(value[2] === "FALSE")
+        console.log("OK");
+        if(data2.data.values !== undefined){
+            data2.data.values.forEach((value,index) => {
+                if(value[2] === "FALSE")
                 vrednosti.push(value);
-        });
+            });
+        }
+        console.log("OK2");
 
         while(vrednosti.length < 5)
             vrednosti.push(["", "", ""]);
@@ -216,7 +219,8 @@ export class SheetFunctions{
         let title = await this.vratiTitlePoslednjegOdgovaranja();
 
         const data = await this.getDataFromSpreadsheet(title+"!D2:D");
-
+        if(data.data.values === undefined || data.data.values === null)
+            return null;
         return data.data.values;
     }
 
@@ -224,6 +228,8 @@ export class SheetFunctions{
         let title = await this.vratiTitlePoslednjegOdgovaranja();
 
         const data = await this.getDataFromSpreadsheet(title+"!A2:E");
+        if(data.data.values == undefined || data.data.values == null)
+            return {data : null, userTime : 0};
         if(data.data.values.length < 4){
             let values = [];
             data.data.values.forEach(e => {
@@ -273,6 +279,8 @@ export class SheetFunctions{
     public async zavrsiOdgovaranje(userID: String)  : Promise<boolean>{
         let title = await this.vratiTitlePoslednjegOdgovaranja();
         const data = await this.getDataFromSpreadsheet(title+"!A2:E");
+        if(data.data.values == undefined || data.data.values == null)
+            return false;
         let index = -1;
 
         for(let i = 0; i < data.data.values.length && index === -1; i++){
@@ -296,6 +304,8 @@ export class SheetFunctions{
     public async obavestiPoslednjeg(){
         let title = await this.vratiTitlePoslednjegOdgovaranja();
         let data = await this.getDataFromSpreadsheet(title + "!A2:E");
+        if(data.data.values === undefined || data.data.values === null)
+            return null;
         let context = undefined;
         let ind;
         for(let i=data.data.values.length-1; i >= 0; i--){
@@ -316,19 +326,24 @@ export class SheetFunctions{
     public async obavestiSledeceg(){
         let title = await this.vratiTitlePoslednjegOdgovaranja();
         let data = await this.getDataFromSpreadsheet(title + "!A2:E");
-        let context;
-        for(let i=0; i<data.data.values.length; i++){
-            if(data.data.values[i][2] == "FALSE"){
-                context = data.data.values[i][3];
-                break;
+        if(data.data.values != undefined){
+            let context;
+            for(let i=0; i<data.data.values.length; i++){
+                if(data.data.values[i][2] == "FALSE"){
+                    context = data.data.values[i][3];
+                    break;
+                }
             }
+            return context;
         }
-        return context;
+        return null;
     }
 
     public async odjavaStudenta(userId:String) : Promise<boolean>{
         let title = await this.vratiTitlePoslednjegOdgovaranja();
         let data = await this.getDataFromSpreadsheet(title + "!A2:E");
+        if(data.data.values == undefined || data.data.values == null)
+            return false;
         let uspesno: boolean = false;
         let index = -1;
         for(let i = 0; i < data.data.values.length; i++){

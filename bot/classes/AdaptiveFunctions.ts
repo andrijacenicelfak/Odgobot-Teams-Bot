@@ -38,6 +38,9 @@ export class AdaptiveFunctions{
 
     public async vratiSvePriavljeneKorisnikeNaPoslednjemOdgovaranju(){
         let vrednosti  = await this.sf.vratiContextSvihNaPoslednjemOdgovaranju();
+        if(vrednosti === null){
+            return null;
+        }
         let nizContext : ConvActiv[] = vrednosti.map(value=>{
             return JSON.parse(value[0]);
         });
@@ -47,11 +50,23 @@ export class AdaptiveFunctions{
     public async vratiTriSledecaZaOdgovaranje(ca : ConvActiv) {
         let dataRows = await this.sf.vratiPoslednjStudenteZaTrenutnoOdgovaranje(ca.conv.user.id);
         let data : string[] = [];
-        dataRows.data.forEach(e=>{
-            data.push(e[0]);
-            data.push(e[1]);
-            data.push(e[2]);
-        })
+        if(dataRows.data != null || dataRows.data != undefined){
+            dataRows.data.forEach(e=>{
+                data.push(e[0]);
+                data.push(e[1]);
+                data.push(e[2]);
+            })
+        }else{
+            data.push("");
+            data.push("");
+            data.push("");
+            data.push("");
+            data.push("");
+            data.push("");
+            data.push("");
+            data.push("");
+            data.push("");
+        }
         let stab : StudentTabela = {
             data : data,
             studentVreme : dataRows.userTime
@@ -64,16 +79,18 @@ export class AdaptiveFunctions{
     }
     public async obavestiPoslednjeg(){
         let context = await this.sf.obavestiPoslednjeg();
-        if(context != undefined){
+        if(context != undefined && context != null){
             let kontekst : ConvActiv = JSON.parse(context)
             return kontekst;
         }
-        return context;
+        return null;
 
     }
 
     public async obavestiSledeceg(){
         let context = await this.sf.obavestiSledeceg();
+        if(context === null)
+            return null;
         let kontekst : ConvActiv = JSON.parse(context)
         return kontekst;
     }

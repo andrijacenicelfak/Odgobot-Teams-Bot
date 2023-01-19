@@ -262,11 +262,15 @@ export class TeamsBot extends TeamsActivityHandler {
       let message : string = (invokeValue.action.data.message == undefined ? "no message" : invokeValue.action.data.message).toString();
       const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
       let kontektsi = await this.adaptiveFunctions.vratiSvePriavljeneKorisnikeNaPoslednjemOdgovaranju();
-      await kontektsi.forEach(async(cr)=>{
-        context.adapter.continueConversation(cr.conv, async(contextn : TurnContext)=>{
-          await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+      if(kontektsi === null){
+        await context.sendActivity("Nema nikog u redu!");
+      }else{
+        await kontektsi.forEach(async(cr)=>{
+          context.adapter.continueConversation(cr.conv, async(contextn : TurnContext)=>{
+            await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+          });
         });
-      });
+      }
       return { statusCode: 200, type: undefined, value: undefined };
     }
     if(invokeValue.action.verb == "zavrsiOdgovaranje"){
@@ -288,7 +292,7 @@ export class TeamsBot extends TeamsActivityHandler {
     if(invokeValue.action.verb === "obavesti_poslednjeg"){ 
       let message : string = (invokeValue.action.data.message == undefined ? "no message" : invokeValue.action.data.message).toString();
       let kon = await this.adaptiveFunctions.obavestiPoslednjeg(); 
-      if(kon != undefined){
+      if(kon != undefined && kon != null){
         const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
         context.adapter.continueConversation(kon.conv, async(contextn : TurnContext)=>{
           await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
@@ -303,10 +307,15 @@ export class TeamsBot extends TeamsActivityHandler {
     if(invokeValue.action.verb === "obavestiSledeceg"){
       let message = "Sledeći ste na redu!";
       let kon = await this.adaptiveFunctions.obavestiSledeceg();
-      const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
-      context.adapter.continueConversation(kon.conv, async(contextn : TurnContext)=>{
-        await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
-      });
+      if(kon === null){
+        await context.sendActivity("Nema nikog u redu!");
+      }else{
+
+        const card = AdaptiveCards.declare<ObavestenjeStudenta>(rawStudentObavestenje).render({message : message});
+        context.adapter.continueConversation(kon.conv, async(contextn : TurnContext)=>{
+          await contextn.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
+        });
+      }
       return { statusCode: 200, type: undefined, value: undefined };
     }
     if(invokeValue.action.verb === "odjava_studenta"){
