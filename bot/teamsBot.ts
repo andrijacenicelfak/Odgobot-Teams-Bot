@@ -77,7 +77,7 @@ export class TeamsBot extends TeamsActivityHandler {
         if (membersAdded[cnt].id) {
           /*const card = AdaptiveCards.declareWithoutData(rawWelcomeCard).render();
           await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });*/
-          await context.sendActivity("Dobro došli");
+          await context.sendActivity("Zdravo, ja sam Odgobot! Kako mogu da pomognem?");
           break;
         }
       }
