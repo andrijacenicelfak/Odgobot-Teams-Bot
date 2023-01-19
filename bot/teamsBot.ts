@@ -173,7 +173,7 @@ export class TeamsBot extends TeamsActivityHandler {
         await this.adaptiveFunctions.KreirajNovuTabelu(idOdg);
         const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorPocetna).render();
         await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
-        fs.writeFileSync("./id_odgovaranja.json", JSON.stringify({id : idOdg}));
+        fs.writeFileSync("C:/home/site/wwwroot/id_odgovaranja.json", JSON.stringify({id : idOdg}));
       return { statusCode: 200, type: undefined, value: undefined };
     }
 
@@ -188,7 +188,7 @@ export class TeamsBot extends TeamsActivityHandler {
         this.profesorPassword = pass;
         const card = AdaptiveCards.declare<TabelaKorisnika>(rawProfesorPocetna).render();
         await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
-        fs.writeFileSync("./profesor_login.json", JSON.stringify({password : pass}));
+        fs.writeFileSync("C:/home/site/wwwroot/profesor_login.json", JSON.stringify({password : pass}));
       return { statusCode: 200, type: undefined, value: undefined };
     }
     if( invokeValue.action.verb ==="loginProfesor"){
